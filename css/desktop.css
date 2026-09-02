@@ -1,0 +1,448 @@
+
+/* ---------- Windows 7 desktop wallpaper ---------- */
+body {
+  background: #0a1a3a url("../assets/wallpaper/win7.png") center center / cover no-repeat fixed;
+  position: relative;
+}
+
+/* ---------- Desktop icon grid ---------- */
+#desktop {
+  position: absolute; top: 12px; left: 12px; right: 0; bottom: 44px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 92px);
+  grid-auto-rows: 96px;
+  grid-auto-flow: column;
+  gap: 4px 8px;
+  padding: 4px;
+  align-content: start;
+}
+.icon {
+  width: 88px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 6px 4px 4px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+}
+.icon:hover {
+  background: rgba(120,180,240,0.20);
+  border-color: rgba(160,210,255,0.55);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+}
+.icon.selected {
+  background: rgba(80,150,230,0.35);
+  border-color: rgba(180,220,255,0.7);
+}
+.icon .glyph {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  line-height: 1;
+  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.55));
+}
+.icon .glyph img {
+  width: 48px; height: 48px;
+  image-rendering: -webkit-optimize-contrast;
+  pointer-events: none;
+}
+.icon .label {
+  margin-top: 4px;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  text-shadow: 1px 1px 2px #000, 0 0 3px #000;
+  word-wrap: break-word;
+  max-width: 84px;
+  line-height: 1.15;
+}
+
+/* ---------- Taskbar ---------- */
+/* Aero glass taskbar: a mostly-uniform dark translucent tint over a
+   moderate wallpaper blur, with a 1px bright highlight along the top edge
+   (the classic Aero pane rim). No dark bands — the SVG's edge stops are
+   just an inkscape artifact, not what kwin renders. */
+#taskbar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 40px;
+  background: rgba(20, 40, 45, 0.22);
+  backdrop-filter: blur(3px) saturate(1.15);
+  -webkit-backdrop-filter: blur(3px) saturate(1.15);
+  border-top: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset;
+  display: flex; align-items: center;
+  padding-right: 6px;
+}
+/* Real Windows 7 Start orb sprite: 54x162, three stacked 54x54 states
+   (normal / hover / pressed). */
+#start {
+  width: 54px; height: 54px;
+  margin: -8px 4px -6px -4px;
+  background-image: url("../assets/orb/orb.png");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 54px 162px;
+  cursor: pointer;
+  filter: drop-shadow(0 0 4px rgba(120,200,255,0.55));
+}
+#start:hover  { background-position: 0 -54px; }
+#start:active { background-position: 0 -108px; }
+#tasks { flex: 1; display: flex; gap: 3px; padding-left: 6px; height: 100%; align-items: center; }
+/* Task button — resting state is a faint translucent panel, mirroring the
+   way seventasks paints an idle task. */
+.task-btn {
+  position: relative;
+  height: 36px; width: 46px; padding: 0;
+  color: #fff; font-size: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(217,217,217,0.24) 0%,
+      rgba(191,191,191,0.06) 50%,
+      rgba(217,217,217,0.18) 100%);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.25) inset,
+    0 0 0 1px rgba(0,0,0,0.25);
+  transition: background 120ms ease, box-shadow 120ms ease;
+}
+/* Hover — gradient lifted straight from Seven-Black/widgets/taskbarhover.svg:
+     #edf6ff → #c2ddfd, plus the soft cyan bloom kwin renders behind it. */
+.task-btn:hover {
+  background: linear-gradient(180deg, rgba(237,246,255,0.85) 0%, rgba(194,221,253,0.85) 100%);
+  color: #14355e;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.7) inset,
+    0 0 10px 1px rgba(140,200,255,0.65),
+    0 0 0 1px rgba(80,150,220,0.6);
+}
+/* Active (window in focus) — brighter, still-glass version of the hover. */
+.task-btn.active {
+  background: linear-gradient(180deg, rgba(237,246,255,0.55) 0%, rgba(160,210,255,0.45) 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.55) inset,
+    0 0 8px rgba(140,200,255,0.55),
+    0 0 0 1px rgba(120,180,230,0.7);
+}
+.task-btn.active:hover {
+  background: linear-gradient(180deg, rgba(237,246,255,0.95) 0%, rgba(194,221,253,0.9) 100%);
+}
+#tray {
+  height: 100%;
+  display: flex; align-items: center; gap: 4px;
+  padding: 0 8px 0 6px;
+  color: #fff; font-size: 11px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.10));
+  border-left: 1px solid rgba(255,255,255,0.18);
+}
+#tray .tray-ico {
+  width: 20px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  border-radius: 2px;
+}
+#tray .tray-ico:hover {
+  background: rgba(255,255,255,0.10);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.25) inset;
+}
+#tray .tray-ico img {
+  width: 16px; height: 16px; display: block;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6));
+}
+#tray .clock {
+  text-align: center; line-height: 1.15;
+  padding: 2px 8px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.75);
+  cursor: default;
+  border-radius: 2px;
+}
+#tray .clock:hover {
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.2) inset;
+}
+/* Show desktop button — thin vertical strip at the very right, Win7 style. */
+#showdesktop {
+  width: 12px; height: 40px;
+  margin-left: 2px;
+  border-left: 1px solid rgba(255,255,255,0.25);
+  background: transparent;
+  cursor: pointer;
+}
+#showdesktop:hover { background: rgba(255,255,255,0.15); }
+
+/* ---------- Aero window ---------- */
+.window {
+  position: absolute;
+  min-width: 480px; min-height: 300px;
+  background: #ececee;
+  border: 1px solid rgba(20,40,80,0.55);
+  border-radius: 8px 8px 3px 3px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.6) inset,
+    0 20px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(0,20,60,0.35);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+/* Glass titlebar — nearly-clear like a real Aero window frame. */
+.titlebar {
+  height: 30px;
+  background:
+    linear-gradient(180deg,
+      rgba(215,232,248,0.55) 0%,
+      rgba(190,215,240,0.35) 50%,
+      rgba(170,200,230,0.45) 100%);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  display: flex; align-items: center;
+  padding: 0 4px 0 8px;
+  cursor: move;
+  border-bottom: 1px solid rgba(120,160,210,0.4);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+.titlebar .title {
+  flex: 1;
+  font-size: 12px;
+  color: #14355e;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+  display: flex; align-items: center;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.titlebar .title .fav { margin-right: 6px; display: inline-flex; vertical-align: middle; }
+.titlebar .title .fav img { display: block; }
+.task-btn .tb-ico { display: inline-flex; }
+.task-btn .tb-ico img { display: block; width: 24px; height: 24px; }
+.win-btns { display: flex; gap: 1px; margin-left: 6px; }
+.win-btns button {
+  width: 45px; height: 22px;
+  border: 1px solid rgba(120,160,210,0.5);
+  background: linear-gradient(180deg, #fbfdff 0%, #dfeaf6 50%, #cfe0f4 51%, #dfeaf6 100%);
+  border-radius: 3px;
+  font-size: 12px; color: #14355e;
+  cursor: pointer;
+  padding: 0;
+}
+.win-btns button:hover { background: linear-gradient(180deg, #ffffff, #e5f2ff 50%, #d5e8ff 51%, #e5f2ff 100%); }
+.win-btns .close { background: linear-gradient(180deg, #ff8c78 0%, #d6402d 50%, #b8321f 51%, #d6402d 100%); color: #fff; border-color: #7d1b0e; }
+.win-btns .close:hover { background: linear-gradient(180deg, #ffb0a0 0%, #e26050 50%, #cd4230 51%, #e26050 100%); }
+
+/* ---------- IE8-style navigation bar ---------- */
+.ie-navbar {
+  background: linear-gradient(180deg, #eaf2fb 0%, #d8e6f4 100%);
+  border-bottom: 1px solid rgba(120,160,210,0.5);
+  padding: 6px 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+/* Chunky IE8 back/forward orbs */
+.navbtn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid #2a4a72;
+  background:
+    radial-gradient(circle at 50% 35%, #eaf6ff 0%, #7bb4ea 45%, #2f6ab0 75%, #143e73 100%);
+  color: #fff; font-weight: bold;
+  cursor: pointer;
+  font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.5) inset,
+    0 -1px 2px rgba(0,0,0,0.35) inset,
+    0 1px 2px rgba(0,0,0,0.35);
+  padding: 0;
+}
+.navbtn:hover:not(:disabled) { filter: brightness(1.1); }
+.navbtn:active:not(:disabled) { box-shadow: 0 1px 2px rgba(0,0,0,0.35) inset; }
+.navbtn:disabled { opacity: 0.45; cursor: default; }
+.navbtn.fwd { font-size: 16px; }
+
+/* IE8 address bar — white, breadcrumb-style, with inline refresh/stop icons */
+.address {
+  flex: 2;
+  min-width: 200px;
+  height: 24px;
+  background: #fff;
+  border: 1px solid #7da6cf;
+  border-radius: 1px;
+  display: flex; align-items: center;
+  padding: 0 4px 0 6px;
+  font-size: 12px;
+  color: #333;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9);
+}
+.address .lock { margin-right: 6px; color: #b58a00; font-size: 12px; }
+.address input {
+  border: 0; outline: 0; flex: 1;
+  font-size: 12px; font-family: inherit;
+  background: transparent;
+  min-width: 0;
+}
+.address .addr-btn {
+  width: 20px; height: 20px;
+  border: 0; background: transparent;
+  color: #2f6ab0; cursor: pointer;
+  font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 3px;
+}
+.address .addr-btn:hover { background: rgba(120,180,240,0.25); }
+
+/* IE search box */
+.ie-search {
+  flex: 1;
+  max-width: 220px; min-width: 100px;
+  height: 24px;
+  background: #fff;
+  border: 1px solid #7da6cf;
+  border-radius: 1px;
+  display: flex; align-items: center;
+  padding: 0 4px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9);
+}
+.ie-search input {
+  border: 0; outline: 0; flex: 1;
+  font-size: 12px; font-family: inherit;
+  background: transparent;
+  color: #666;
+  min-width: 0;
+}
+.ie-search .mag { color: #2f6ab0; font-size: 12px; padding: 0 2px; }
+
+/* ---------- IE8 command bar ---------- */
+.ie-cmdbar {
+  background: linear-gradient(180deg, #f4f8fd 0%, #dae7f4 100%);
+  border-bottom: 1px solid rgba(120,160,210,0.5);
+  display: flex; align-items: center;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #14355e;
+  gap: 2px;
+  height: 26px;
+}
+.cmd {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+.cmd:hover {
+  background: linear-gradient(180deg, #fdfdfd, #d9ecfc);
+  border-color: #a5c5e8;
+}
+.cmd .cmdico { font-size: 13px; line-height: 1; color: #cc8800; }
+.cmd.fav .cmdico { color: #e3b100; }
+.cmd.home .cmdico { color: #2f7ac0; }
+.ie-cmdbar .sep {
+  width: 1px; height: 16px;
+  background: rgba(120,160,210,0.55);
+  margin: 0 4px;
+}
+.ie-cmdbar .cmd-spacer { flex: 1; }
+
+/* ---------- IE8 tab strip ---------- */
+.ie-tabs {
+  background:
+    linear-gradient(180deg, #b8cee6 0%, #9bb8d6 100%);
+  border-bottom: 1px solid #6f8fb2;
+  display: flex; align-items: flex-end;
+  padding: 4px 8px 0;
+  gap: 2px;
+  height: 26px;
+}
+.ie-tab {
+  display: flex; align-items: center; gap: 6px;
+  background: linear-gradient(180deg, #f6faff 0%, #d6e4f4 100%);
+  border: 1px solid #7d9fc4;
+  border-bottom: 0;
+  border-radius: 4px 4px 0 0;
+  padding: 3px 10px 4px;
+  font-size: 11px;
+  color: #14355e;
+  max-width: 220px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset;
+}
+.ie-tab .fav { display: inline-flex; }
+.ie-tab .fav img { width: 14px; height: 14px; display: block; }
+.ie-tab .x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px;
+  border-radius: 2px;
+  color: #666; font-size: 11px;
+  cursor: pointer;
+}
+.ie-tab .x:hover { background: #e05050; color: #fff; }
+.ie-tab.new-tab {
+  background: transparent;
+  border-color: transparent;
+  color: #14355e;
+  padding: 3px 8px 4px;
+  cursor: pointer;
+}
+.ie-tab.new-tab:hover {
+  background: linear-gradient(180deg, #f6faff 0%, #d6e4f4 100%);
+  border-color: #7d9fc4;
+}
+
+.content { flex: 1; background: #fff; position: relative; overflow: hidden; }
+.content iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+
+/* IE8 status bar with security zone + zoom */
+.statusbar {
+  height: 22px;
+  background: linear-gradient(180deg, #ecf2f9 0%, #d5e2f0 100%);
+  border-top: 1px solid rgba(120,160,210,0.5);
+  display: flex; align-items: center;
+  padding: 0 8px;
+  font-size: 11px; color: #14355e;
+  justify-content: space-between;
+  gap: 8px;
+}
+.statusbar .zone { display: flex; align-items: center; gap: 6px; }
+.statusbar .zoom {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 6px;
+  border-left: 1px solid rgba(120,160,210,0.55);
+  color: #14355e;
+}
+
+/* ---------- Resize handles ---------- */
+.rh {
+  position: absolute;
+  z-index: 5;
+}
+.rh.n  { top: -3px;    left: 6px;    right: 6px;   height: 6px;  cursor: n-resize;  }
+.rh.s  { bottom: -3px; left: 6px;    right: 6px;   height: 6px;  cursor: s-resize;  }
+.rh.w  { left: -3px;   top: 6px;     bottom: 6px;  width: 6px;   cursor: w-resize;  }
+.rh.e  { right: -3px;  top: 6px;     bottom: 6px;  width: 6px;   cursor: e-resize;  }
+.rh.nw { top: -3px;    left: -3px;   width: 12px;  height: 12px; cursor: nw-resize; }
+.rh.ne { top: -3px;    right: -3px;  width: 12px;  height: 12px; cursor: ne-resize; }
+.rh.sw { bottom: -3px; left: -3px;   width: 12px;  height: 12px; cursor: sw-resize; }
+.rh.se { bottom: -3px; right: -3px;  width: 14px;  height: 14px; cursor: se-resize; }
+/* Small grip triangle in the bottom-right, like Win7 windows */
+.rh.se::after {
+  content: "";
+  position: absolute; right: 2px; bottom: 2px;
+  width: 10px; height: 10px;
+  background:
+    linear-gradient(135deg,
+      transparent 0 55%,
+      rgba(255,255,255,0.9) 55% 62%,
+      transparent 62% 70%,
+      rgba(120,160,210,0.9) 70% 77%,
+      transparent 77% 85%,
+      rgba(120,160,210,0.9) 85% 92%,
+      transparent 92% 100%);
+}
+.window.maximized .rh { display: none; }

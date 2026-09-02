@@ -1,0 +1,12 @@
+/* Shared reset used by both the Windows 7 desktop (index.html) and the
+   Windows Mobile 6.1 Today screen (mobile.html). */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
