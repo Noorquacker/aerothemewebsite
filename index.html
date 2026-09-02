@@ -3,6 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>Desktop</title>
+<script>
+  // Redirect mobile visitors to the WM6.1 Today screen.
+  // Runs before anything renders so mobile users never see a flash of desktop.
+  // Escape hatch: append ?desktop=1 to force the Windows 7 view on mobile.
+  (function () {
+    try {
+      var force = /[?&]desktop=1\b/.test(location.search);
+      if (force) return;
+      var ua = navigator.userAgent || "";
+      var uaMobile = (navigator.userAgentData && navigator.userAgentData.mobile) === true;
+      var uaHit    = /Android|iPhone|iPad|iPod|IEMobile|BlackBerry|Opera Mini|Mobile Safari/i.test(ua);
+      var coarse   = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      var narrow   = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+      if (uaMobile || uaHit || (coarse && narrow)) {
+        location.replace("mobile.html");
+      }
+    } catch (e) { /* if anything odd, stay on desktop */ }
+  })();
+</script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; font-family: "Segoe UI", Tahoma, sans-serif; }

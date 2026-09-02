@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Today</title>
+<style>
+  /* Windows Mobile 6.1 "Today" screen.
+     Design language: dark navy top title bar, sky-blue plugin backdrop,
+     small Tahoma text (WM 6.1, NOT the ballooned 6.5 text), 1px borders,
+     bottom soft-key strip. */
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: "Tahoma", "Segoe UI", sans-serif;
+    font-size: 11px;
+    background: #1a2a3e;
+    color: #000;
+    overflow: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Phone frame. On desktop it centers as a 240x320 device;
+     on a mobile viewport it fills the screen. */
+  #phone {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    background: #0a1830;
+  }
+  @media (min-width: 480px) {
+    body {
+      display: flex; align-items: center; justify-content: center;
+      background:
+        radial-gradient(ellipse at 50% 40%, #4a6a8a 0%, #1a2a3e 60%, #0a1424 100%);
+    }
+    #phone {
+      position: relative; inset: auto;
+      width: 320px; height: 480px;
+      border: 10px solid #1c1c1c;
+      border-radius: 22px;
+      box-shadow:
+        0 0 0 1px #000,
+        0 24px 60px rgba(0,0,0,0.6),
+        inset 0 0 0 1px #2a2a2a;
+    }
+  }
+
+  /* ---------- Title bar (top status strip) ---------- */
+  .titlebar {
+    flex: 0 0 26px;
+    background: linear-gradient(180deg, #4b6a94 0%, #2c4a76 50%, #24406a 100%);
+    color: #fff;
+    display: flex; align-items: center;
+    padding: 0 4px;
+    gap: 4px;
+    font-size: 11px;
+    border-bottom: 1px solid #0e1e35;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset;
+  }
+  .titlebar .start {
+    display: flex; align-items: center; gap: 3px;
+    height: 20px; padding: 0 6px;
+    background: linear-gradient(180deg, #7db34a 0%, #4b8620 50%, #3a6d15 100%);
+    border: 1px solid #1e3e08;
+    color: #fff;
+    font-size: 10px; font-weight: bold;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .titlebar .start img { width: 12px; height: 12px; display: block; }
+  .titlebar .title {
+    flex: 1;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+  }
+  .titlebar .icons {
+    display: flex; align-items: center; gap: 3px;
+    font-size: 10px;
+  }
+  /* Little CSS pips for signal/bluetooth/battery — pure geometry, no images. */
+  .pip {
+    display: inline-block;
+    width: 14px; height: 14px;
+    position: relative;
+  }
+  .pip.signal::before {
+    content: "";
+    position: absolute; left: 2px; bottom: 2px;
+    width: 0; height: 0;
+    border-left: 10px solid transparent;
+    border-bottom: 8px solid #fff;
+  }
+  .pip.bt {
+    color: #7fbfff; font-weight: bold; font-size: 12px;
+    text-align: center; line-height: 14px;
+  }
+  .pip.bt::before { content: "\1F5B7"; }
+  .pip.batt {
+    border: 1px solid #fff; height: 8px; width: 14px;
+    margin-top: 3px;
+    position: relative; background: linear-gradient(90deg, #a9df6a 78%, transparent 78%);
+  }
+  .pip.batt::after {
+    content: ""; position: absolute; right: -2px; top: 1px;
+    width: 2px; height: 4px; background: #fff;
+  }
+  .titlebar .clock {
+    padding-left: 4px;
+    font-weight: bold;
+  }
+
+  /* ---------- Today screen body ---------- */
+  #today {
+    flex: 1;
+    background:
+      /* soft haze on the wallpaper */
+      linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(0,0,0,0.20) 100%),
+      /* Aqua sky, classic WM6 "Windows Default" today wallpaper vibe */
+      linear-gradient(180deg,
+        #6ea9de 0%,
+        #4c8bc9 30%,
+        #325f9c 60%,
+        #1e3e6f 100%);
+    display: flex; flex-direction: column;
+    overflow: auto;
+    color: #fff;
+  }
+
+  /* Big Windows flag / branding block at the top of today, like the default */
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.35);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.25);
+    background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0));
+  }
+  .brand .logo {
+    width: 40px; height: 40px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
+  }
+  .brand .txt {
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+    line-height: 1.25;
+  }
+  .brand .txt small {
+    display: block;
+    font-size: 10px; opacity: 0.85;
+  }
+
+  /* Today plugin rows. Each is a compact strip with an icon and one line
+     of secondary info. WM6.1 kept these lean; 6.5 blew them up. */
+  .plugin {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px;
+    min-height: 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.10);
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.45);
+  }
+  .plugin:active { background: rgba(0,0,0,0.15); }
+  .plugin img { width: 24px; height: 24px; display: block; flex: 0 0 24px; }
+  .plugin .lines { flex: 1; min-width: 0; line-height: 1.2; }
+  .plugin .primary { font-size: 12px; }
+  .plugin .secondary { font-size: 10px; opacity: 0.85; }
+  .plugin .chev { font-size: 12px; opacity: 0.8; padding-right: 2px; }
+
+  /* Date row (WM shows the date in a plain strip near the top) */
+  .today-date {
+    padding: 3px 8px;
+    font-size: 10px;
+    background: rgba(0,0,0,0.20);
+    border-bottom: 1px solid rgba(0,0,0,0.35);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  /* ---------- Bottom soft-key bar ---------- */
+  .softkeys {
+    flex: 0 0 26px;
+    background: linear-gradient(180deg, #4b6a94 0%, #2c4a76 50%, #24406a 100%);
+    border-top: 1px solid #0e1e35;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset;
+    color: #fff; font-size: 11px;
+    display: flex; align-items: stretch;
+  }
+  .softkey {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+    cursor: pointer;
+  }
+  .softkey + .softkey { border-left: 1px solid rgba(0,0,0,0.35); box-shadow: -1px 0 0 rgba(255,255,255,0.15); }
+  .softkey:active { background: rgba(0,0,0,0.20); }
+
+  /* ---------- App view (iframe wrapper shown when a plugin opens).
+     Sits between the title bar (26px) and the soft keys (26px) so the
+     "OK" key is always reachable to exit back to Today. */
+  #app {
+    position: absolute;
+    top: 26px; bottom: 26px; left: 0; right: 0;
+    display: none;
+    flex-direction: column;
+    background: #fff;
+    z-index: 5;
+  }
+  #app.open { display: flex; }
+  #app iframe {
+    flex: 1;
+    border: 0; width: 100%; background: #fff;
+  }
+</style>
+</head>
+<body>
+
+<div id="phone">
+
+  <div class="titlebar">
+    <div class="start" title="Start"><img src="assets/mobile/flag.png" alt=""><span>start</span></div>
+    <div class="title" id="app-title"></div>
+    <div class="icons">
+      <span class="pip signal" title="Signal"></span>
+      <span class="pip batt" title="Battery"></span>
+      <span class="clock" id="clock">12:00</span>
+    </div>
+  </div>
+
+  <div id="today">
+    <div class="brand">
+      <img class="logo" src="assets/mobile/flag.png" alt="">
+      <div class="txt">
+        Windows Mobile
+        <small>Home</small>
+      </div>
+    </div>
+
+    <div class="today-date" id="date"></div>
+
+    <div id="plugins"></div>
+  </div>
+
+  <div id="app">
+    <iframe id="app-frame" src="about:blank"></iframe>
+  </div>
+
+  <div class="softkeys">
+    <div class="softkey" id="sk-left">Contacts</div>
+    <div class="softkey" id="sk-right">Calendar</div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================================
+  // ADD "TODAY" PLUGINS HERE
+  // Each entry becomes a row on the Today screen. Tapping opens
+  // the URL in a full-screen iframe (soft key becomes "OK" to
+  // return to Today).
+  //
+  //   primary   : main line
+  //   secondary : dimmer sub-line (optional)
+  //   url       : URL to load
+  //   icon      : path to a small (24x24) PNG in assets/icons/
+  //               (any existing desktop icon works)
+  // ============================================================
+  const PLUGINS = [
+    { primary: "Wireless Manager",  secondary: "All wireless: On",             url: "about:blank",                              icon: "assets/icons/network.png" },
+    { primary: "Outlook E-mail",    secondary: "No unread messages",           url: "about:blank",                              icon: "assets/icons/mail.png" },
+    { primary: "Calendar",          secondary: "No upcoming appointments",     url: "about:blank",                              icon: "assets/icons/documents.png" },
+    { primary: "Internet Explorer", secondary: "en.wikipedia.org",             url: "https://en.wikipedia.org/wiki/Windows_Mobile_6", icon: "assets/icons/ie.png" },
+    { primary: "Music",             secondary: "Windows Media",                url: "about:blank",                              icon: "assets/icons/music.png" },
+    { primary: "Getting Started",   secondary: "9 tasks remaining",            url: "about:blank",                              icon: "assets/icons/computer.png" },
+  ];
+  // ============================================================
+
+  const pluginsEl = document.getElementById("plugins");
+  PLUGINS.forEach(p => {
+    const el = document.createElement("div");
+    el.className = "plugin";
+    el.innerHTML = `
+      <img src="${p.icon}" alt="">
+      <div class="lines">
+        <div class="primary">${p.primary}</div>
+        ${p.secondary ? `<div class="secondary">${p.secondary}</div>` : ""}
+      </div>
+      <span class="chev">&#9654;</span>
+    `;
+    el.addEventListener("click", () => openApp(p));
+    pluginsEl.appendChild(el);
+  });
+
+  // -------------------- App open/close --------------------
+  const app = document.getElementById("app");
+  const appFrame = document.getElementById("app-frame");
+  const appTitle = document.getElementById("app-title");
+  const skLeft   = document.getElementById("sk-left");
+  const skRight  = document.getElementById("sk-right");
+
+  function openApp(p) {
+    appFrame.src = p.url;
+    appTitle.textContent = p.primary;
+    app.classList.add("open");
+    skLeft.textContent  = "Menu";
+    skRight.textContent = "OK";
+  }
+  function closeApp() {
+    app.classList.remove("open");
+    appFrame.src = "about:blank";
+    appTitle.textContent = "";
+    skLeft.textContent  = "Contacts";
+    skRight.textContent = "Calendar";
+  }
+  skRight.addEventListener("click", () => {
+    if (app.classList.contains("open")) closeApp();
+  });
+
+  // -------------------- Clock + date --------------------
+  function tick() {
+    const d = new Date();
+    document.getElementById("clock").textContent =
+      d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("date").textContent =
+      d.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  }
+  tick();
+  setInterval(tick, 30000);
+</script>
+
+</body>
+</html>
