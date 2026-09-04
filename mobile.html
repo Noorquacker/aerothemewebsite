@@ -12,7 +12,7 @@
 <div id="phone">
 
   <div class="titlebar">
-    <div class="start" title="Start"><img src="assets/mobile/flag.png" alt=""><span>start</span></div>
+    <div class="start" title="Start"><img src="assets/mobile/winflag.svg" alt=""><span>start</span></div>
     <div class="title" id="app-title"></div>
     <div class="icons">
       <span class="pip signal" title="Signal"></span>
@@ -22,15 +22,14 @@
   </div>
 
   <div id="today">
-    <div class="brand">
-      <img class="logo" src="assets/mobile/flag.png" alt="">
-      <div class="txt">
-        Windows Mobile
-        <small>Home</small>
+    <!-- Date row: clock-icon + today's date, styled as a plugin so it
+         sits flush with the rest of the Today list (WM6.1 look). -->
+    <div class="plugin today-date-row">
+      <img src="assets/mobile/clock.png" alt="">
+      <div class="lines">
+        <div class="primary" id="date"></div>
       </div>
     </div>
-
-    <div class="today-date" id="date"></div>
 
     <div id="plugins"></div>
   </div>

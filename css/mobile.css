@@ -123,28 +123,6 @@ html, body {
   color: #fff;
 }
 
-/* Big Windows flag / branding block at the top of today, like the default */
-.brand {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 8px;
-  border-bottom: 1px solid rgba(0,0,0,0.35);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.25);
-  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0));
-}
-.brand .logo {
-  width: 40px; height: 40px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
-}
-.brand .txt {
-  font-size: 14px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
-  line-height: 1.25;
-}
-.brand .txt small {
-  display: block;
-  font-size: 10px; opacity: 0.85;
-}
-
 /* Today plugin rows. Each is a compact strip with an icon and one line
    of secondary info. WM6.1 kept these lean; 6.5 blew them up. */
 .plugin {
@@ -163,14 +141,9 @@ html, body {
 .plugin .secondary { font-size: 10px; opacity: 0.85; }
 .plugin .chev { font-size: 12px; opacity: 0.8; padding-right: 2px; }
 
-/* Date row (WM shows the date in a plain strip near the top) */
-.today-date {
-  padding: 3px 8px;
-  font-size: 10px;
-  background: rgba(0,0,0,0.20);
-  border-bottom: 1px solid rgba(0,0,0,0.35);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.15);
-}
+/* The date row IS a plugin row, but not interactive. */
+.today-date-row { cursor: default; }
+.today-date-row:active { background: transparent; }
 
 /* ---------- Bottom soft-key bar ---------- */
 .softkeys {
