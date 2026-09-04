@@ -19,7 +19,11 @@ html, body {
   display: flex; flex-direction: column;
   background: #0a1830;
 }
-@media (min-width: 480px) {
+/* Only render the phone-shell frame when the visitor is on a real
+   pointer device (mouse) AND has room for it. A touch phone with a
+   large CSS width — landscape, browser with tiny chrome — should
+   still get the full-viewport view. */
+@media (min-width: 480px) and (pointer: fine) and (hover: hover) {
   body {
     display: flex; align-items: center; justify-content: center;
     background:
