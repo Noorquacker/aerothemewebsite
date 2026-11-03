@@ -10,23 +10,15 @@
 //
 // Icons already extracted from the "Windows 7 Aero" icon theme:
 //   computer, ie, recycle-empty, recycle-full, documents,
-//   folder, folder-html, music, network, games, mail, internet
+//   folder, folder-html, music, network, games, mail, internet,
+//   contact (Windows Contacts card, from AeroThemePlasma icons)
 //
 // To add more: drop any PNG into assets/icons/  and reference it below.
 // ============================================================
 const ICONS = [
-  { label: "Computer",       url: "about:blank",                       icon: "assets/icons/computer.png" },
-  { label: "Recycle Bin",    url: "about:blank",                       icon: "assets/icons/recycle-empty.png" },
-  { label: "About Me",       url: "pages/about-me/",                   icon: "assets/icons/documents.png" },
-  { label: "Projects",       url: "pages/projects/",                   icon: "assets/icons/folder.png" },
-  { label: "Minecraft Server", url: "pages/minecraft-server-info/",    icon: "assets/icons/games.png" },
-  { label: "Internet Explorer", url: "https://en.wikipedia.org/wiki/Internet_Explorer", icon: "assets/icons/ie.png" },
-  { label: "Wikipedia",      url: "https://en.wikipedia.org/",         icon: "assets/icons/internet.png" },
-  { label: "My Documents",   url: "about:blank",                       icon: "assets/icons/documents.png" },
-  { label: "Music",          url: "about:blank",                       icon: "assets/icons/music.png" },
-  { label: "Network",        url: "about:blank",                       icon: "assets/icons/network.png" },
-  { label: "Games",          url: "about:blank",                       icon: "assets/icons/games.png" },
-  { label: "Mail",           url: "about:blank",                       icon: "assets/icons/mail.png" },
+  { label: "About Me",         url: "pages/about-me/",              icon: "assets/icons/contact.png" },
+  { label: "Projects",         url: "pages/projects/",              icon: "assets/icons/folder.png" },
+  { label: "Minecraft Server", url: "pages/minecraft-server-info/", icon: "assets/icons/games.png" },
 ];
 // ============================================================
 
