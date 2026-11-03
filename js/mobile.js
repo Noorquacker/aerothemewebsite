@@ -13,7 +13,7 @@
 const PLUGINS = [
   { primary: "About Me",         secondary: "Noorquacker Industries", url: "pages/about-me/",              icon: "assets/icons/contact.png" },
   { primary: "Projects",         secondary: "Project write-ups",      url: "pages/projects/",              icon: "assets/icons/folder.png" },
-  { primary: "Minecraft Server", secondary: "mc.nqind.com",           url: "pages/minecraft-server-info/", icon: "assets/icons/games.png" },
+  { primary: "Minecraft Server", secondary: "mc.nqind.com",           url: "pages/minecraft-server-info/", icon: "assets/icons/minecraft.png" },
 ];
 // ============================================================
 
