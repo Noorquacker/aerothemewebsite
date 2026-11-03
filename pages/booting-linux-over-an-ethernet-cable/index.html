@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Booting Linux over an Ethernet cable - 2019 - Noorquacker Industries</title>
+<link rel="stylesheet" href="../page.css">
+</head>
+<body>
+<div class="page">
+  <header class="banner">
+    <p class="site">Noorquacker Industries</p>
+    <h1 class="title">Booting Linux over an Ethernet cable - 2019</h1>
+    <p class="meta"><span class="pill">Posted September 19, 2022</span><span class="pill">Project Showcases</span></p>
+  </header>
+  <main class="article">
+<h1>Wait, booting over Ethernet?</h1>
+<p>Yes, it's very much a thing, and it's called PXE booting. Possibly one of my favorite ways of booting, PXE boot makes the NIC solicit a DHCP lease, and if the DHCP lease contains a filename and IP, it uses TFTP to download a file from a server and boot to it. Unfortunately, there's a legacy boot and EFI boot format, so you have to support both.</p>
+<h2>Why?</h2>
+<p>Well, here at the fictional Noorquacker Industries, we have multiple servers:</p>
+<ul>
+<li>Gaghiel, the storage server that is <em>incredibly</em> reliable. Reached over 6 months of uptime, has a 6TB (after RAID-Z) ZFS share that everyone in my family dumps stuff onto.</li>
+<li>Shamshel, the do-everything server that is serving this webpage and my Minecraft server. Has a 240GB SSD for speed, but backs up everything important to Gaghiel.</li>
+<li>Israfel, the massive compute hog held together with hopes, dreams, and eBay parts. I don't want to buy another hard drive or SSD, so can I boot Israfel over ethernet?</li>
+</ul>
+<p>It turns out we can.</p>
+<p>And heck, we already store everything on a network share hosted by Gaghiel, so why not boot over something to Gaghiel?</p>
+<h2>Issues</h2>
+<p>So it turns out that this is actually <em>really hard</em> if you want this to work perfectly over an Ethernet cable. In order for PXE booting to be completely diskless, you need the following:</p>
+<ul>
+<li>A separate DHCP server than the one built into your router. Unfortunately, my router doesn't give PXE filenames or anything, so you need to host your own. This means that all DHCP-connected devices on your network (aka all of them by default) won't work if your DHCP server goes down, isn't that wonderful.</li>
+<li>A TFTP server for serving what you're booting to.</li>
+<li>Optionally, iPXE to actually be functional</li>
+<li>Optionally, a web server so that you don't have to make really weird iPXE scripts, instead you can make an awful PHP page that returns an iPXE script to execute based on the MAC address of the client.
+<ul>
+<li>We do this so that we can have multiple PXE-booting clients autoboot to something you specify based on the MAC address and reuse the same iPXE filename. We just do something like <a href="http://some-web-server-gaghiel-hosts:8080/ipxe-script.php?mac={MAC}">http://some-web-server-gaghiel-hosts:8080/ipxe-script.php?mac={MAC}</a></li>
+</ul>
+</li>
+<li>A bunch of iSCSI targets set up. This was a <em>mess</em> to set up, but we need some disks for the machines to write to.
+<ul>
+<li>You can also use NFS, but I had issues with it suddenly disconnecting. NFS also has a serious security vulnerability.</li>
+</ul>
+</li>
+<li>Patience.</li>
+</ul>
+<h2>The Game Plan</h2>
+<p>Okay, so here's how I was going to do this:</p>
+<ul>
+<li>I already have a Pi-hole VM set up on Gaghiel that uses dnsmasq for its DNS server, and it comes with a DHCP server as well. I can use that for my DHCP server.</li>
+<li>I'll use the same VM as a TFTP server for downloading iPXE.</li>
+<li>And, of course, Pi-hole uses apache2 + PHP, so I can use that for the iPXE script generation.</li>
+<li>Gaghiel itself runs FreeNAS, which has iSCSI and NFS shares, so that solves the issue of where the root partitions will be.</li>
+<li>Unfortunately, the new Ubuntu 20.04+ installers don't support iSCSI root partitions, so we have to use the legacy installer. I've been complaining for years and they still haven't added it.</li>
+</ul>
+<p>Somehow, it worked, up until Pi-hole kept on not working. Eventually, I stopped using Pi-hole altogether because adblocking was no longer a priority for me. Maybe I'll bring it back later.</p>
+<h2>Dealing with no DHCP server</h2>
+<p>Because I didn't have the ability to have my own DHCP server anymore due to not having Pi-hole, I decided to instead use USBs with iPXE flashed onto them. The apache2 + PHP script generation is on a secret place on my website now, but other than that, everything works the same. The Ubuntu install can't even tell that anything's changed other than the random USB that it sees but doesn't mount.</p>
+<h2>Conclusion</h2>
+<p>I don't have any photos, but this project was a success. It was a massive flex to be able to just plug an Ethernet cable into any device and just boot from that Ethernet cable, but unfortunately, I have to return to the USB lifestyle.</p>
+<p>Iserafel is still booting to an iSCSI disk with absolutely no issues. Since it barely needs any disk speed and has massive amounts of RAM, this solution works perfect for my needs. Now I can train AI with the insane amounts of cheap RAM I downloaded off eBay.</p>
+<p>You can see the github repo for my iPXE fork with my embeded starter script at <a href="https://github.com/Noorquacker/ipxe">https://github.com/Noorquacker/ipxe</a>. I still need to set up a CI pipeline so it just spits out the exact format I want every time iPXE makes a commit.</p>
+  </main>
+  <footer class="footer">&copy; Noorquacker Industries</footer>
+</div>
+<script src="../page.js"></script>
+</body>
+</html>

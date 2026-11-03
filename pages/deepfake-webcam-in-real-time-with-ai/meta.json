@@ -1,0 +1,39 @@
+{
+  "id": 18,
+  "title": "Deepfake Webcam in Real-Time with AI - 2021",
+  "alias": "deepfake-webcam-in-real-time-with-ai",
+  "state": 1,
+  "category": "Project Showcases",
+  "author": "Noorquacker",
+  "created": "2022-08-18 03:21:27",
+  "modified": "2022-09-01 21:27:44",
+  "publish_up": "2022-08-18 03:21:27",
+  "hits": 1093,
+  "metadesc": "",
+  "metakey": "",
+  "language": "*",
+  "images": {
+    "image_intro": "",
+    "float_intro": "",
+    "image_intro_alt": "",
+    "image_intro_caption": "",
+    "image_fulltext": "",
+    "float_fulltext": "",
+    "image_fulltext_alt": "",
+    "image_fulltext_caption": ""
+  },
+  "urls": {
+    "urla": false,
+    "urlatext": "",
+    "targeta": "",
+    "urlb": false,
+    "urlbtext": "",
+    "targetb": "",
+    "urlc": false,
+    "urlctext": "",
+    "targetc": ""
+  },
+  "tags": null,
+  "status": "published",
+  "images_used": []
+}

@@ -1,0 +1,39 @@
+{
+  "id": 21,
+  "title": "Booting Linux over an Ethernet cable - 2019",
+  "alias": "booting-linux-over-an-ethernet-cable",
+  "state": 1,
+  "category": "Project Showcases",
+  "author": "Noorquacker",
+  "created": "2022-09-19 22:33:45",
+  "modified": "2023-12-03 18:52:28",
+  "publish_up": "2022-09-19 22:33:45",
+  "hits": 1085,
+  "metadesc": "",
+  "metakey": "",
+  "language": "*",
+  "images": {
+    "image_intro": "",
+    "float_intro": "",
+    "image_intro_alt": "",
+    "image_intro_caption": "",
+    "image_fulltext": "",
+    "float_fulltext": "",
+    "image_fulltext_alt": "",
+    "image_fulltext_caption": ""
+  },
+  "urls": {
+    "urla": false,
+    "urlatext": "",
+    "targeta": "",
+    "urlb": false,
+    "urlbtext": "",
+    "targetb": "",
+    "urlc": false,
+    "urlctext": "",
+    "targetc": ""
+  },
+  "tags": null,
+  "status": "published",
+  "images_used": []
+}

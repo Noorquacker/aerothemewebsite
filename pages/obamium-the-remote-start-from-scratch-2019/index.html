@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obamium, the Remote Start from Scratch - 2019 - Noorquacker Industries</title>
+<link rel="stylesheet" href="../page.css">
+</head>
+<body>
+<div class="page">
+  <header class="banner">
+    <p class="site">Noorquacker Industries</p>
+    <h1 class="title">Obamium, the Remote Start from Scratch - 2019</h1>
+    <p class="meta"><span class="pill">Posted August 23, 2022</span><span class="pill">Project Showcases</span></p>
+  </header>
+  <main class="article">
+<h1>Obamium? What?</h1>
+<p>Yeah, so I chose this name because I named my car obamacar. You can see its instagram page <a href="https://www.instagram.com/2008_lexus_rx350_awd/" target="_blank" rel="noopener noreferrer">here</a> if you want, I don't post often.</p>
+<p>This is going to require context</p>
+<h2>The Death of Obamacar</h2>
+<p>In summary, I own a 2008 Lexus RX 350 AWD, in maroon, aka Brandywine Mica. Here's a photo:</p>
+<p><img src="images/9033587.jpg" width="300" /></p>
+<p>It's a reliable Lexus. Unfortunately, while driving to the ACT, the alternator broke. During one of the most important tests. Wonderful</p>
+<p>Anyways, after repairing it, I had a sudden sense of connection with my car, as I didn't have any experience with any car repair beforehand. Not even an oil change by myself. Therefore, it needed a name, and obamacar was chosen.</p>
+<p>The real reason is because there were these memes of Obama Prism floating around at the time, called obamium. That's why remote start is called obamium.</p>
+<h1>Starting Obamium</h1>
+<p>In November 2019, I got the idea to make my own remote start. How hard could it be? All I had to do was figure out how to make obamacar think that a key is inserted and turning, right?</p>
+<p>Right!</p>
+<h2>Probing Around</h2>
+<p>I still have a folder on my desktop all these years later containing various wiring diagrams I found online about obamacar's ignition lock cylinder wiring. Here's an extremely important one:</p>
+<p><img src="images/OBAMACAR.jpg" alt="" /></p>
+<p>This photo was <em>instrumental</em> to figuring out how to start. I found out that AM1 and AM2 are both always-on 12V sources, with IG1 and ST1 being low-current relay inputs that connect to AM1, while ST2 is a higher current input from the high current AM2 supply, with thick wires. IG2 is low enough current to be controlled with IG1 as well.</p>
+<p>While figuring this out, I also busted a fuse when everything was on a breadboard, connecting AM1 to GND, and I had no spare fuses. I had to get a friend's dad to drive me to robotics that night, at least he was proud because he found out the reason why my car broke down was because I was making remote start.</p>
+<h2>Making a Wiring Harness</h2>
+<p>In the super chilly November night, I pushed wires into the existing connector in order to have contacts. I then soldered these to some automotive connectors I found off eBay so that I could have a wiring harness. Yes, I soldered to a wiring harness, this is a sin, but I don't have crimp for it. I'm using solid core wire anyways, it's not like this thing is built to last the life of obamacar!</p>
+<p>In the end, I had 2 connectors with the pinouts when combined:</p>
+<ol>
+<li>AM1 12V source (low current)</li>
+<li>GND</li>
+<li>Key Detect (active low)</li>
+<li>Ignition (active high)</li>
+<li>AM2 12V source (high current)</li>
+<li>Starter Relay (needs high current, used another relay to switch this to AM2)</li>
+<li>Accessory Power (active high)</li>
+<li>Trunk (now defunct)</li>
+</ol>
+<p>I added the trunk opener because I didn't have an actual key fob with lock/unlock until nearly a year later.</p>
+<h1>Obamium, the Game Plan</h1>
+<p>So we had to do the following:</p>
+<ol>
+<li>Receive an RF signal from a fob to start obamacar</li>
+<li>Save the current battery voltage</li>
+<li>Make obamacar think that a key is inserted. Being a Lexus, the steering wheel comes out to your preferred position when the key is inserted, and it will <em>not</em> come out if you somehow start the car before inserting the key, because that is physically impossible under normal circumstances. We are not normal circumstances, so we must emulate this
+<ol>
+<li>We also <em>NEED</em> this because when the key is inserted, that's when obamacar authenticates the transponder with the ECU in order to allow starting. Without this, the fuel pump never turns on, and we crank infinitely! Definitely do not let this happen</li>
+</ol>
+</li>
+<li>Wait about 250 milliseconds</li>
+<li>Switch the key to ignition. Lets the ECU boot up, even for a split second. It'll be fine</li>
+<li>Wait, or don't. You don't really have to wait considering you can turn your key extremely fast and still start fine.</li>
+<li>Switch the key to start as well. Remember, you must have ignition and start both on at the same time.</li>
+<li>When the battery voltage exceeds previous, we have started. Start waiting.</li>
+<li>If it doesn't go above the previous voltage in 3 seconds, we failed to start. Reset, take the key out, and return to normal.</li>
+<li>When we see that the accessory power has been turned on, we know a physical key has been turned, so wait 500 milliseconds and turn off. Hand off control back to the user</li>
+</ol>
+<p>10 easy steps to remote start my car!</p>
+<h2>The First Prototype</h2>
+<p>The excitement I had when this actually worked.</p>
+<p>I used the following to complete this:</p>
+<ul>
+<li><a href="https://www.adafruit.com/product/1095">Adafruit 4-Button Key Fob</a> and its momentary receiver</li>
+<li>Arduino Nano</li>
+<li>Generic 5V Relays</li>
+<li>Some perfboard that I ordered off eBay</li>
+<li>Those automotive connectors I talked about earlier for connecting to my DIY 8 pin wiring harness</li>
+<li>A big old automotive 40 amp relay, because the starter relay needs a lot of current to switch itself on. Ironic, a relay switching another relay</li>
+</ul>
+<p>This was an <em>incredibly</em> simple proof-of-concept. Here's a photo of the very first version, Obamium v1, on perfboard:</p>
+<p><img src="images/first_soldered.jpg" width="500" /></p>
+<p>I was very unprofessional on my Snapchat story.</p>
+<p>Unfortunately, I can't insert videos in Joomla, so you're just going to have to imagine a video version of this with audio. The first remote start, December 18, 2019. At least, the first video.</p>
+<p>I should mention at this point that all software is written in C, of course, with the normal Arduino IDE.</p>
+<p><img src="images/Screenshot_2022-08-23_22-33-11.png" width="500" /></p>
+<p>This was an amazing feeling.</p>
+<h1>Moving On</h1>
+<p>I made remote start!<br />And I broke it when trying to wrap it in duct tape to put in my dash, so I threw it away!</p>
+<p>Time to start over...</p>
+<h2>Version 2</h2>
+<p>I wanted to add the ESP32 as well, a microcontroller with WiFi so that I can spend the little time I have in school connecting obamacar to the school WiFi and start from my phone. Cool, right?</p>
+<p>I decided that after watching many GreatScott videos and hearing his sponsorships about JLCPCB, I can give JLC a try with a custom PCB. Here's my result after a couple days of figuring out how all this works:</p>
+<p><img src="images/Screenshot_2022-08-23_22-36-43.png" width="300" /></p>
+<p>Not bad! And now we can make it real...</p>
+<p><img src="images/secondremotestart_2020-01-08.jpg" width="500" /></p>
+<p>Almost there...</p>
+<p><img src="images/secondremotestart-2020-01-21.jpg" width="500" /></p>
+<p>Finally, January 10, 2020, I had Version 2 soldered.</p>
+<h2>Finished?</h2>
+<p>Yep! Successfully wired to the harness with the relay as well, ready to throw in obamacar, and it worked. The code is the same as Obamium v1.</p>
+<p>However, I had some issues that I don't have photos of, such as directly driving 40mA relays with a 30mA-max Arduino Nano. Whoops. I ended up making a mess of transistors and stuff underneath, so it worked out.</p>
+<p>Unfortunately, I didn't end up using the ESP32 because I couldn't get it to talk over UART with the Arduino. Yes, I used the TXB0108 bi-directional level shifter, but for some reason it gives me problems, so I removed it.</p>
+<p>Finished! Except it broke in around June 2020, during quarantine. I didn't drive anymore, so I saw no reason to fix it.</p>
+<h1>Version 3?</h1>
+<p>Okay, it's May 2021, I barely drive because quarantine and online school, I got through winter without remote start fine, I don't care, so why did I make version 3? Heheheh, you see, I got asked out to prom, and I had a month to make obamacar the best car ever. This included remote start.</p>
+<h2>Alright, Version 3 Goals!</h2>
+<p>I wanted the following:</p>
+<ul>
+<li>My own AVR wiring, I don't want to have an Arduino showing up like an eyesore</li>
+<li>Communication over the <a href="https://en.wikipedia.org/wiki/LoRa">LoRa</a> protocol for infinite range</li>
+<li>A header for future expansion, if I add an ESP32 down the line</li>
+<li>No more clacky relays! Use MOSFETs instead</li>
+<li>More SMD soldering</li>
+<li>Onboard 12V to 5V switching regulator</li>
+</ul>
+<p>So I had until June 11 to get this <em>done</em>.</p>
+<p><img src="images/Screenshot_2022-08-23_22-50-01.png" alt="" /></p>
+<p>After many mistakes such as this, that I found out on the fourth version, I made something:</p>
+<p><img src="images/Screenshot_2022-08-23_22-51-05.png" alt="" /></p>
+<p>The entire thing was made in <strong>2 days</strong>. Yeah. I messed up a bunch. Didn't realize the status LED was so small and didn't realize the TXB0108 level shifter is strangely problematic.</p>
+<p>Anyways, LoRa also needs someone on the other side, so I made a transceiver for talking between my phone and another LoRa communication module:</p>
+<p><img src="images/lora-transceiver.png" /></p>
+<p>Unfortunately, since the main Obamium v3 pcb didn't work, I never made the fob, so that was sad. The AVR never responded to my USBtiny ISP programmer.</p>
+<p>In layman's terms, computer no talk to controller so controller bad :(</p>
+<p>I also had a week to do <em>all</em> of this until prom day, so I decided to abandon this. Sadly, Obamium v3 didn't work, but I eventually learned that the TXB0108 was causing issues. Desoldering it worked, but I found that out nearly a year later.</p>
+<h1>Version 4?</h1>
+<p>Okay, why am I going to mess up again? I already sank money into Obamium v3 only to watch it fail, how do I know I'm not going to make the same mistake?</p>
+<p>Jokes aside, the failure of Obamium v3 was holding me back from doing it again because I felt like I didn't know what I was doing anymore.</p>
+<h2>Fixing my Mistakes</h2>
+<p>In Obamium v3, we had some issues:</p>
+<ul>
+<li>AVR would not respond to my USBtinyISP when placed into Obamium's PCB. It was socketed and made to swap with the Arduino Uno, but it would work in an Uno and not in Obamium.</li>
+<li>I could never figure out LoRa. I had some spare chips that I bought for testing it out, but all the example scripts kept failing to initialize the LoRa modules.</li>
+<li>I forgot to put on a USB port for debugging over serial to my phone, whoops.</li>
+<li>I didn't mark the pins on the connector that goes to the wiring harness. Since I'm wiring that by hand, it'd be nice to have silkscreen markings about which pin does what, so I don't have to reference the original schematic.</li>
+<li>Not enough exposed pads for debugging! I liked how on my old OnePlus 3 phone, there were exposed pads for the battery input so I could solder my own DC-DC power supply to it as a battery emulator, so I wanted the same thing on Obamium v4.</li>
+</ul>
+<p>Most of these came down to rushing the project. Eventually, though, I got there.</p>
+<p>I decided that to overcome these, I would get rid of LoRa and also use the Arduino Nano Every. It's an Arduino Nano that has features that I don't really care about other than castellated pins on the side, meaning I can solder straight to the PCB instead of putting headers through 2 boards and having them stick out a bunch.</p>
+<p><img src="images/Screenshot_2022-08-24_08-38-09.png" alt="" /></p>
+<p>Yet I still made the mistake of trying to drive a 12V P-channel MOSFET with 5V.</p>
+<p><em>Anyways</em>, I finished and got my PCBs ordered and arrived.</p>
+<p><img src="images/obamiumv4pcb.jpeg" width="500" /></p>
+<p>Look at it, it's so fancy!</p>
+<p><img src="images/obamiumv4soldered.jpeg" width="500" /></p>
+<p>After not that much soldering and trying not to destroy it, I was done!</p>
+<p>Except the good old driving-a-12V-P-channel-MOSFET-with-5V mistake came to bite me in the back. So I did what I had to and used my X-Acto to cut a trace and started to solder up a diode (for inductive spiking, actually, with the starter relay) and an N-channel BJT for actually driving the MOSFET, with a pullup resistor to 12V. That way it switches the MOSFET gate between 12V and GND, which is correct.</p>
+<p>But this was ugly.</p>
+<p><img src="images/obamiumv4mistake.jpeg" width="500" /></p>
+<p>It ain't stupid if it works!</p>
+<p><img src="images/obamium_done.jpeg" width="500" /></p>
+<p>And it does work.</p>
+<p>On August 2, 2022, Obamium came back. And it's here to stay.</p>
+<h1>Version 5?</h1>
+<p>
+  On April 25, 2023, obamacar was rear ended and totaled. Don't use your phone while driving in rush hour traffic. Now I have a 2009 Toyota Camry with a push start key fob, and work towards remote start started in July 2023.
+</p>
+<p>
+  On December 27, 2023, a prototype with a breadboard and ESP32-C3 successfully started my car over WiFi. Soon, LoRa will become a possibility.
+</p>
+<h1>Source Code</h1>
+<p><a href="https://github.com/Noorquacker/obamium">https://github.com/Noorquacker/obamium</a></p>
+  </main>
+  <footer class="footer">&copy; Noorquacker Industries</footer>
+</div>
+<script src="../page.js"></script>
+</body>
+</html>

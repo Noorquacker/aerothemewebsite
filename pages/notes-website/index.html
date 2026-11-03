@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notes Website - 2021 - Noorquacker Industries</title>
+<link rel="stylesheet" href="../page.css">
+</head>
+<body>
+<div class="page">
+  <header class="banner">
+    <p class="site">Noorquacker Industries</p>
+    <h1 class="title">Notes Website - 2021</h1>
+    <p class="meta"><span class="pill">Posted March 1, 2022</span><span class="pill">Project Showcases</span></p>
+  </header>
+  <main class="article">
+<h1>Background</h1>
+<p>First of all, a relevant meme. I promise you'll understand later:</p>
+<p><img src="images/madman.jpg" alt="" /></p>
+<p>Trust me. You'll get it later.</p>
+<h2>Alright, actual background.</h2>
+<p>So, like many people, I type decently fast. I can regularly break 100 WPM as proven by my <a href="https://data.typeracer.com/pit/profile?user=noorquacker">TypeRacer profile</a>, which also shows the time I spent bored in my computer science class racing people online in order to finally break the 100 WPM barrier.</p>
+<p>Like some nerds, I also enjoy Markdown very much. I believe it's a super efficient way of formatting simple documents, such as notes.</p>
+<p>And like some other nerds, I enjoy LaTeX, the way of typesetting fancy math equations.</p>
+<h3>Why is this relevant?</h3>
+<p>When college was starting, I finally realized I can get rid of handwritten notes and start typing for once, which will be so much faster. One of my friends said that he uses paper because it's faster and easier, and then I decided to massively flex on him to prove a point by opening TypeRacer.</p>
+<p>But what note editor do I choose? Do I use that Evernote online stuff that I don't like? Do I use Microsoft Word which I don't have because I'm on Linux? Do I use LibreOffice Writer? Do I learn emacs and gain a 6 foot beard?</p>
+<h2> Also, what about math notes? I'm an engineer</h2>
+<p><em>They called me a mad man</em>.</p>
+<p>It turns out, with my typing speed, I am able to keep up with transcribing my professor's whiteboard math into LaTeX just a hair short of real-time.</p>
+<p>I definitely feel about as fast as those around me writing my notes.</p>
+<p>Every time I tell someone that I write my math notes in LaTeX, they call me insane. I don't blame them, it's a pain, but it's so pretty.</p>
+<p>However, I don't like LaTeX documents, so I'll stick with Markdown notes with LaTeX added in.</p>
+<h2>The Final Showdown of Markdown Editors</h2>
+<p>Obviously, I decide to use one of the many Markdown editors, but I'm really picky. Here are my criteria:</p>
+<ul>
+<li><strong>No Electron apps whatsoever.</strong> Electron is an ungodly inefficient approach, although a necessary evil.</li>
+<li>Fast</li>
+<li>Looks pretty</li>
+<li>Nice</li>
+<li>Not bad</li>
+<li>Work offline, hopefully</li>
+<li>Obviously free and open source</li>
+</ul>
+<p>Yeah, so there go half of the Markdown apps since they're Electron apps or online, or both.</p>
+<h1>My marriage with Remarkable!</h1>
+<p>I found out that <a href="https://remarkableapp.github.io/linux.html">Remarkable</a> is a free and open source note editor written in Python that uses WebKit GTK to do its work. It also includes MathJax, meaning LaTeX support.</p>
+<p>It ticks all of my boxes! It's offline, looks pretty, isn't Electron, FOSS, not bad, etc</p>
+<h2>My divorce with Remarkable :(</h2>
+<p>Once you start to type lots of math with Remarkable, you start to notice the following:</p>
+<ol>
+<li>Light theme <em>hurts</em> to read</li>
+<li>MathJax is incredibly slow. Every key press in the Remarkable editor is almost like a refresh in the preview pane, meaning MathJax takes a few <em>seconds</em> after typing in order to render.</li>
+</ol>
+<p>However, it's free and open source, meaning I can modify it however I want!</p>
+<h2>My child with Remarkable</h2>
+<p>Continuing the marriage analogy, I forked Remarkable to solve those two issues. I decided to use <a href="https://katex.org/">KaTeX</a>, an <strong>incredibly</strong> fast LaTeX web renderer. I'm not kidding when I say this is fast. If you've used MathJax or visited any website with MathJax (shoutout to <a href="https://tutorial.math.lamar.edu/Classes/DE/IVPWithLaplace.aspx">Paul's Online Notes</a> for being an example in case you're unfamiliar), you'd know and you'd be used to it.</p>
+<p>KaTeX is <em>instant</em>.</p>
+<p>You can go ahead and see my dark themed KaTeX Remarkable fork on my <a href="https://github.com/Noorquacker/Remarkable">GitHub profile</a>. <strong>Notice</strong>: my GitHub fork is not for others to reproduce. It is, quite literally, a place where I just stored the changes I made. The way I install it is to install Remarkable from the Arch User Repository, then overwrite it with my files. I do not have any means of distributing my fork other than GitHub. You are on your own.</p>
+<h1>Managing my notes</h1>
+<p>Obviously, I should be able to have my notes on multiple devices. I don't just want to have it on my laptop. If I wanted to haul around something big everywhere just to study for classes, I'd be writing on paper!</p>
+<p>Slander aside, I needed some way to sync my notes to my PC, phone, and server. I like my redundancy.</p>
+<p>And what better way of syncing files than <a href="https://syncthing.net/">Syncthing</a>? This is my favorite file syncing app, and I find it essential.</p>
+<h2>Sharing my notes on my website</h2>
+<p>After a friend of mine kept on asking for my notes and proceeding to get angry when I would give him a Markdown file, I decided to make an easier way of sharing my notes: <em>automatic</em>.</p>
+<p>Since I have a whole website just sitting there, and I have Syncthing syncing to my server automagically, and Remarkable is literally just a GTK WebKit renderer with a Python backend, I decided to instantly use PHP and Python magic to make this a real site.</p>
+<p>Do you wish to see my awful notes for differential equations and linear algebra? Well you're in luck! You can see an example of fancy notes, <a href="notes/index.php?path=source%2Fcollege+notes%2Fmath3108/5.1.md">here's some linear algebra</a>.</p>
+<p>Image preview of my notes website:</p>
+<p><img src="images/Screenshot_2022-08-17_22-07-50.png" alt="" /></p>
+<p>You can see the source code for the website <a href="https://github.com/Noorquacker/notes-site">on my Github</a>, of course.</p>
+<p>All this work because I can barely read my own handwriting. Isn't that funny?</p>
+  </main>
+  <footer class="footer">&copy; Noorquacker Industries</footer>
+</div>
+<script src="../page.js"></script>
+</body>
+</html>

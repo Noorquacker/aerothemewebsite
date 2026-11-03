@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deepfake Webcam in Real-Time with AI - 2021 - Noorquacker Industries</title>
+<link rel="stylesheet" href="../page.css">
+</head>
+<body>
+<div class="page">
+  <header class="banner">
+    <p class="site">Noorquacker Industries</p>
+    <h1 class="title">Deepfake Webcam in Real-Time with AI - 2021</h1>
+    <p class="meta"><span class="pill">Posted August 18, 2022</span><span class="pill">Project Showcases</span></p>
+  </header>
+  <main class="article">
+<h1>Background</h1>
+<p>So basically, Zoom classes.</p>
+<p>Hundreds of days into quarantine, and I am so tired. As expected of every high school student locked in their room all day.</p>
+<p>Anyways, so I pass the time with memes, and for months I was obsessed with these memes deepfaking famous internet people into singing the song <em>Baka Mitai</em> from the game Yakuza 0. This meme was insanely popular, you can read more about it on <a href="https://knowyourmeme.com/memes/dame-da-ne-baka-mitai">Know Your Meme</a>.</p>
+<p>I <em>desperately</em> want to make this with my friends, so I eventually stumble into a guide on how to make it, using the <a href="https://github.com/AliaksandrSiarohin/first-order-model">First Order Model</a> AI to do deepfakes.</p>
+<h1>My Reign of Terror</h1>
+<p>Yeah, so my friends weren't happy when I sent them videos of their deepfakes singing "dame da ne".</p>
+<p>However, I realized that while I was generating the deepfakes, I was getting 20-25 FPS. I then thought, man that's not bad, my GTX 1060 6GB is tearing through this pretty well. The quality is low but it's as good as Zoom calls, could I make this run real-time with webcam input and create a virtual webcam output?</p>
+<h2>Planning this out</h2>
+<p>I needed to do the following:</p>
+<ul>
+<li>Somehow get webcam input. This shouldn't be too hard, I hear FFmpeg can help me</li>
+<li>Transform this into a numpy tensor or whatever the AI reads as input</li>
+<li>Transform the tensor output to something FFmpeg-friendly, like a u8 stream</li>
+<li>Somehow turn that into a virtual webcam output???</li>
+</ul>
+<h2>numpy's Terrible Tensors</h2>
+<p>Okay, so I was able to use an FFmpeg command to stream webcam input and turn it into a u8 stream, which I can parse with whatever Python magic. Thankfully, there's a Python library for FFmpeg and streams, so I was able to literally pipe it to big arrays.</p>
+<p>But there's one problem.</p>
+<p>The AI wants a numpy tensor, and I have <em>zero</em> clue how to do that.</p>
+<p><strong>After much pain and struggling...</strong></p>
+<p>I figured it out! I don't have photos of this, unfortunately, but I was outputting to some window for testing. I am now able to pass in webcam data into the AI and get a result, hooray.</p>
+<h2>Webcam Output</h2>
+<p>Alright, I successfully deepfaked myself into my teacher, what next? Oh yeah, <em>putting it in Zoom</em>.</p>
+<p>So, as it turns out, I was using Droidcam for using an old phone as a webcam, and it turns out that Droidcam uses the <a href="https://github.com/umlaeute/v4l2loopback">v4l2loopback</a> kernel module for emulating a webcam. How wonderful!</p>
+<p>Now, after finagling with it, realizing that /dev/video3 is the input for my script and /dev/video5 is the output to Zoom, I just had to set the permission and I was <em>done</em>. And man, this was super cool. Showing up to Zoom class with my teacher's face. They knew me as the one with the funny Zoom photos, so they didn't mind, it was a little something to pass the time.</p>
+<h1>Source Code</h1>
+<p><a href="https://github.com/Noorquacker/deepfake-webcam/">https://github.com/Noorquacker/deepfake-webcam/</a></p>
+  </main>
+  <footer class="footer">&copy; Noorquacker Industries</footer>
+</div>
+<script src="../page.js"></script>
+</body>
+</html>
