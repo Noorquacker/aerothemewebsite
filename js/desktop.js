@@ -17,6 +17,9 @@
 const ICONS = [
   { label: "Computer",       url: "about:blank",                       icon: "assets/icons/computer.png" },
   { label: "Recycle Bin",    url: "about:blank",                       icon: "assets/icons/recycle-empty.png" },
+  { label: "About Me",       url: "pages/about-me/",                   icon: "assets/icons/documents.png" },
+  { label: "Projects",       url: "pages/projects/",                   icon: "assets/icons/folder.png" },
+  { label: "Minecraft Server", url: "pages/minecraft-server-info/",    icon: "assets/icons/games.png" },
   { label: "Internet Explorer", url: "https://en.wikipedia.org/wiki/Internet_Explorer", icon: "assets/icons/ie.png" },
   { label: "Wikipedia",      url: "https://en.wikipedia.org/",         icon: "assets/icons/internet.png" },
   { label: "My Documents",   url: "about:blank",                       icon: "assets/icons/documents.png" },
@@ -193,6 +196,31 @@ function openIE(entry) {
   });
   win.querySelector(".addr-btn.stop").addEventListener("click", () => {
     try { iframe.contentWindow.stop(); } catch(err) {}
+  });
+
+  // Back / Forward drive the iframe's own history.
+  win.querySelector(".navbtn.back").addEventListener("click", () => {
+    try { iframe.contentWindow.history.back(); } catch(err) {}
+  });
+  win.querySelector(".navbtn.fwd").addEventListener("click", () => {
+    try { iframe.contentWindow.history.forward(); } catch(err) {}
+  });
+
+  // Keep the address bar, title bar and tab in sync when links inside
+  // the page navigate. Only works for same-origin pages (our pages/);
+  // cross-origin sites throw, and we just keep the last known values.
+  const tabLabel = win.querySelector(".tab-label");
+  iframe.addEventListener("load", () => {
+    try {
+      const href = iframe.contentWindow.location.href;
+      if (href && href !== "about:blank") address.value = href;
+      const t = iframe.contentDocument.title;
+      if (t) {
+        titleEl.textContent = t + " - Windows Internet Explorer";
+        tabLabel.textContent = t;
+        taskBtn.title = t;
+      }
+    } catch(err) {}
   });
 
   // Tab close = close window (single-tab model)

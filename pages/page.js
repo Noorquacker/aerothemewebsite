@@ -8,7 +8,8 @@
   }
   document.addEventListener("click", function (e) {
     var img = e.target.closest(".article img");
-    if (img) {
+    // Images inside links (e.g. project cards) navigate instead.
+    if (img && !img.closest("a")) {
       close();
       var box = document.createElement("div");
       box.className = "lightbox";

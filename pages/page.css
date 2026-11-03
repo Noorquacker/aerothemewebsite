@@ -11,22 +11,27 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* ---------- Page background ----------
    Swap the backdrop by changing --page-bg. background-attachment: fixed
    keeps it still while the article scrolls over it.
-   Current: "Zune / Media Center" — near-black with a single glowing
-   blue-teal light low on the horizon, plus a thin bright horizon line.
-   (Previous placeholder, black → graphite:
-     radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,255,255,0.10), transparent 70%),
-     linear-gradient(180deg, #0b0b0d 0%, #1c1d20 45%, #34363a 100%); ) */
+   Current: "Zune" — near-black with a hot magenta-to-orange glow low
+   on the horizon (the Zune software's signature colours), plus a thin
+   bright horizon line.
+   Alternatives tried:
+   - Media Center blue-teal glow: swap the two glow layers for
+       rgba(140,230,255,0.55) core / rgba(0,150,220,0.45) bloom,
+       horizon line rgba(170,235,255,0.35), base mid-stop #02131f.
+   - Plain placeholder, black → graphite:
+       radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,255,255,0.10), transparent 70%),
+       linear-gradient(180deg, #0b0b0d 0%, #1c1d20 45%, #34363a 100%) */
 :root {
   --page-bg:
-    /* hot core of the glow, just below the horizon */
-    radial-gradient(ellipse 45% 18% at 50% 86%, rgba(140,230,255,0.55), transparent 70%),
-    /* broad blue-teal bloom */
-    radial-gradient(ellipse 90% 45% at 50% 88%, rgba(0,150,220,0.45), rgba(0,90,160,0.18) 45%, transparent 75%),
+    /* hot orange-pink core of the glow, just below the horizon */
+    radial-gradient(ellipse 40% 16% at 50% 87%, rgba(255,150,90,0.55), transparent 70%),
+    /* broad magenta bloom */
+    radial-gradient(ellipse 95% 45% at 50% 88%, rgba(236,0,140,0.50), rgba(150,0,110,0.20) 45%, transparent 75%),
     /* faint thin horizon line */
-    linear-gradient(180deg, transparent 85.6%, rgba(170,235,255,0.35) 86%, transparent 86.6%),
+    linear-gradient(180deg, transparent 85.6%, rgba(255,190,220,0.35) 86%, transparent 86.6%),
     /* slight lift at the top so it's not a flat void */
-    radial-gradient(ellipse 70% 35% at 50% 0%, rgba(60,80,110,0.25), transparent 70%),
-    linear-gradient(180deg, #030407 0%, #05070c 60%, #02131f 86%, #000 100%);
+    radial-gradient(ellipse 70% 35% at 50% 0%, rgba(90,60,100,0.22), transparent 70%),
+    linear-gradient(180deg, #050306 0%, #08050a 60%, #1a0614 86%, #000 100%);
 }
 
 body {
@@ -37,7 +42,7 @@ body {
   line-height: 1.6;
   color: #1d2b3a;
   background: var(--page-bg);
-  background-color: #030407;
+  background-color: #050306;
   background-attachment: fixed;
 }
 
@@ -235,3 +240,51 @@ body {
   /* Hover lift feels wrong on touch. */
   .article img:hover { transform: none; }
 }
+
+/* ---------- Projects listing (pages/projects/) ---------- */
+.article .intro { margin-top: 22px; color: #3a4b5c; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.article a.card {
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #a9cbe9;
+  border-radius: 10px;
+  color: inherit;
+  background: linear-gradient(180deg, #ffffff 0%, #eef6fd 100%);
+  box-shadow: 0 4px 14px rgba(0,60,120,0.18), inset 0 1px 0 #fff;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+.article a.card:hover {
+  color: inherit;
+  border-color: #5fb0ea;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0,60,120,0.28), 0 0 0 3px rgba(95,208,240,0.30);
+}
+.article .card img.card-thumb {
+  width: 100%; height: 140px;
+  margin: 0; padding: 0;
+  object-fit: cover;
+  border: 0; border-bottom: 1px solid #c5ddf3;
+  border-radius: 0;
+  box-shadow: none;
+  background: #dfeaf6;
+  cursor: pointer;
+  transform: none;
+}
+.card-body { display: flex; flex-direction: column; gap: 4px; padding: 10px 14px 14px; }
+.card-title { font-size: 16px; font-weight: 600; line-height: 1.3; color: #0f4f8f; }
+.card-year {
+  align-self: flex-start;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #fff;
+  background: linear-gradient(180deg, #4fb4f7 0%, #1f7fd6 50%, #0f63b8 51%, #1a7ad0 100%);
+  border: 1px solid #0b4f94;
+}
+.card-text { font-size: 13px; line-height: 1.5; color: #3a4b5c; }
