@@ -1,0 +1,39 @@
+{
+  "id": 7,
+  "title": "Minecraft Server Info",
+  "alias": "minecraft-server-info",
+  "state": 1,
+  "category": "Uncategorised",
+  "author": "Noorquacker",
+  "created": "2020-02-09 03:48:58",
+  "modified": "2023-11-28 16:56:14",
+  "publish_up": "2020-02-09 03:48:58",
+  "hits": 17537,
+  "metadesc": "",
+  "metakey": "",
+  "language": "*",
+  "images": {
+    "image_intro": "",
+    "float_intro": "",
+    "image_intro_alt": "",
+    "image_intro_caption": "",
+    "image_fulltext": "",
+    "float_fulltext": "",
+    "image_fulltext_alt": "",
+    "image_fulltext_caption": ""
+  },
+  "urls": {
+    "urla": false,
+    "urlatext": "",
+    "targeta": "",
+    "urlb": false,
+    "urlbtext": "",
+    "targetb": "",
+    "urlc": false,
+    "urlctext": "",
+    "targetc": ""
+  },
+  "tags": null,
+  "status": "published",
+  "images_used": []
+}

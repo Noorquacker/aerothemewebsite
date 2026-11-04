@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RGB LED Controller - 2016 - Noorquacker Industries</title>
+<link rel="stylesheet" href="../page.css">
+</head>
+<body>
+<div class="page">
+  <header class="banner">
+    <p class="site">Noorquacker Industries</p>
+    <h1 class="title">RGB LED Controller - 2016</h1>
+    <p class="meta"><span class="pill">Posted July 28, 2016</span><span class="pill">Project Showcases</span></p>
+  </header>
+  <main class="article">
+<h1>Background</h1>
+<p>As one of my first projects where I used a "popular" programming language and also integrated it with electronics, the RGB LED Controller is a project worth showing as it still works to this day, 2022-08-17.</p>
+<p>In 7th grade, I wanted to get on the RGB hype train since my brother just bought the GTX 1070 STRIX and was flexing his breathing RGB lighting, so I wanted to DIY my own solution, since I only had these other choices for RGB:</p>
+<ul>
+<li>Insanely expensive Corsair/Noctua/ASUS/Someone else's ready-to-go solution. Very easy, made for custom PCs, plugs right into your motherboard USB headers, and comes with software to configure it. The top-tier choice, if you have money.</li>
+<li>Another GTX 1070 STRIX.</li>
+<li>Some strange RGB LED strip off eBay or Amazon that comes with an IR remote for easy color changing. Not fun, but likely cheaper now since prices have dropped. Doesn't come with breathing lights, which I really wanted.</li>
+<li>DIY the first option, having to do everything from scratch.</li>
+</ul>
+<h1>Going DIY</h1>
+<p>As you can tell, I chose the last option, soldering an Arduino Nano to a perfboard with 3 N-channel MOSFETs and an RGB LED strip from <a href="https://www.adafruit.com/product/285?length=1" target="_blank" rel="noopener noreferrer">Adafruit</a> (link may not reflect the same product I purchased) with some wires sticking into my power supply's leftover PCIe power pins in order to steal 12V from somewhere.</p>
+<h2>The Schematic</h2>
+<p>Since I'm literally just connecting an Arduino Nano to an RGB LED strip, this was going to be extremely easy considering there are so many schematics online. Here's one:</p>
+<!-- TODO: schematic image missing; the old site's images/rgb.jpg was not an image (it was an unrelated SQLite file). Add the schematic as images/rgb-schematic.jpg. -->
+<p>It's basically this but for a Nano</p>
+<p>For connecting to my PC, I took a miniUSB cable and just chopped the wires for the data pins and soldered on female jumper headers to plug into my motherboard's USB header. This way I could control it from my PC!</p>
+<h2>The Result</h2>
+<p>Yeah, so it's not the <em>best</em> looking, but it was by 13-year-old me:</p>
+<p><img src="images/signal-2022-07-18-110136_002.jpeg" alt="" /></p>
+<p>Do note that this photo was taken in 2022, inside my Node 202 PC case.</p>
+<p>Do also note that I don't feel like disassembling my PC to take a photo of the component side. Sorry guys, but just imagine a Nano soldered to perfboard with 3 MOSFETS and an RGB LED strip and a mystery black and red wire coming out. The mystery wires are power wires that plug into a spare PCI-E power connector, of course.</p>
+<h1>Software Time</h1>
+<p>However, software is still missing, so I had to write my own from scratch.</p>
+<h2>Arduino Sketch</h2>
+<p>For communication, I decided to use the <a href="https://github.com/firmata/protocol" target="_blank" rel="noopener noreferrer">Firmata protocol</a> since it's something widely used for talking to Arduinos. I don't have to create my own command specification for talking to the Arduino this way.</p>
+<p>I just uploaded the <a href="https://github.com/firmata/arduino/blob/master/examples/StandardFirmata/StandardFirmata.ino" target="_blank" rel="noopener noreferrer">StandardFirmata</a> sketch and decided to do all my logic on my PC.</p>
+<h2>PC Logic - Where the magic happens</h2>
+<p>Having just learned C# from a project I made for my Minecraft server, which I unfortunately can't find right now (TODO: Find server sys tray viewer), I decided to make a Windows Forms app since it was gonna be easy, right?</p>
+<p><strong><em>Wrong!</em></strong></p>
+<p>I wanted my RGB LED strip to react to the following:</p>
+<ul>
+<li>React to my PC Sound</li>
+<li>Show a static color</li>
+<li>Fade in and out from a color, making a breathing effect, because my brother wouldn't stop flexing his GPU breathing blue</li>
+<li>Strobing color</li>
+<li>Cycle between rainbow colors</li>
+<li>React based on CPU temperature</li>
+</ul>
+<p>Those are all trivial except for PC sound and CPU temperature. Eventually, I found the OpenHardwareLib library, as well as the NAudio library, and I somehow pulled that off in the end.</p>
+<p>Many comments later, I finished, and here is the code: <a href="https://github.com/Noorquacker/RGBLEDController" target="_blank" rel="noopener noreferrer">https://github.com/Noorquacker/RGBLEDController</a>. It's got a lot of cringe comments from 13-year-old me, so don't be too surprised if you find something weird.</p>
+<h1>The Conclusion</h1>
+<p>So, here's the thing.</p>
+<p>I wrote a Windows Forms app.</p>
+<p>And I switched to Linux about 1.5 years later.</p>
+<p>So I decided to hardcode the rainbow cycle into the Arduino Nano and leave it. And it's been working for nearly 6 years now.</p>
+<p>I don't have any plans on porting this to Linux even though I would definitely rather rewrite it in Rust. I have much cooler project ideas, and I enjoy the rainbow color cycle anyways. Sometimes, the simplest solutions are the best.</p>
+<p>And by sometimes, I mean nearly all the time.</p>
+  </main>
+  <footer class="footer">&copy; Noorquacker Industries</footer>
+</div>
+<script src="../page.js"></script>
+</body>
+</html>

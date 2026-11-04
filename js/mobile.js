@@ -11,12 +11,9 @@
 //               (any existing desktop icon works)
 // ============================================================
 const PLUGINS = [
-  { primary: "Wireless Manager",  secondary: "All wireless: On",             url: "about:blank",                              icon: "assets/icons/network.png" },
-  { primary: "Outlook E-mail",    secondary: "No unread messages",           url: "about:blank",                              icon: "assets/icons/mail.png" },
-  { primary: "Calendar",          secondary: "No upcoming appointments",     url: "about:blank",                              icon: "assets/icons/documents.png" },
-  { primary: "Internet Explorer", secondary: "en.wikipedia.org",             url: "https://en.wikipedia.org/wiki/Windows_Mobile_6", icon: "assets/icons/ie.png" },
-  { primary: "Music",             secondary: "Windows Media",                url: "about:blank",                              icon: "assets/icons/music.png" },
-  { primary: "Getting Started",   secondary: "9 tasks remaining",            url: "about:blank",                              icon: "assets/icons/computer.png" },
+  { primary: "About Me",         secondary: "Noorquacker Industries", url: "pages/about-me/",              icon: "assets/icons/user.png" },
+  { primary: "Projects",         secondary: "Project write-ups",      url: "pages/projects/",              icon: "assets/icons/folder.png" },
+  { primary: "Minecraft Server", secondary: "mc.nqind.com",           url: "pages/minecraft-server-info/", icon: "assets/icons/minecraft.png" },
 ];
 // ============================================================
 
@@ -43,20 +40,58 @@ const appTitle = document.getElementById("app-title");
 const skLeft   = document.getElementById("sk-left");
 const skRight  = document.getElementById("sk-right");
 
+// Pages visited inside the app iframe, so the left soft key can act as
+// "Back" once you've followed a link (e.g. Projects -> a project).
+let appHistory = [];
+
+function updateSoftkeys() {
+  if (!app.classList.contains("open")) {
+    skLeft.textContent  = "Contacts";
+    skRight.textContent = "Calendar";
+    return;
+  }
+  skLeft.textContent  = appHistory.length > 1 ? "Back" : "Menu";
+  skRight.textContent = "OK";
+}
+
 function openApp(p) {
+  appHistory = [];
   appFrame.src = p.url;
   appTitle.textContent = p.primary;
   app.classList.add("open");
-  skLeft.textContent  = "Menu";
-  skRight.textContent = "OK";
+  updateSoftkeys();
 }
 function closeApp() {
   app.classList.remove("open");
+  appHistory = [];
   appFrame.src = "about:blank";
   appTitle.textContent = "";
-  skLeft.textContent  = "Contacts";
-  skRight.textContent = "Calendar";
+  updateSoftkeys();
 }
+
+// Track navigation inside the iframe (same-origin pages only) and show
+// the page's own title, minus the site-name suffix.
+appFrame.addEventListener("load", () => {
+  if (!app.classList.contains("open")) return;
+  try {
+    const href = appFrame.contentWindow.location.href;
+    if (href === "about:blank") return;
+    if (appHistory.length > 1 && appHistory[appHistory.length - 2] === href) {
+      appHistory.pop();            // we went back
+    } else if (appHistory[appHistory.length - 1] !== href) {
+      appHistory.push(href);       // new page
+    }
+    const t = appFrame.contentDocument.title.replace(/ - Noorquacker Industries$/, "");
+    if (t) appTitle.textContent = t;
+  } catch (err) { /* cross-origin: keep the plugin's name */ }
+  updateSoftkeys();
+});
+
+skLeft.addEventListener("click", () => {
+  if (app.classList.contains("open") && appHistory.length > 1) {
+    try { appFrame.contentWindow.history.back(); } catch (err) {}
+  }
+});
 skRight.addEventListener("click", () => {
   if (app.classList.contains("open")) closeApp();
 });

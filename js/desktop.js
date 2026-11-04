@@ -7,23 +7,21 @@
 //   label : text shown under the icon
 //   url   : URL the iframe navigates to
 //   icon  : path to a PNG in assets/icons/  (48x48 or 256x256, they scale)
+//   openOnStart : (optional) true = open this window when the site loads,
+//                 so first-time visitors land on something to read
 //
 // Icons already extracted from the "Windows 7 Aero" icon theme:
 //   computer, ie, recycle-empty, recycle-full, documents,
-//   folder, folder-html, music, network, games, mail, internet
+//   folder, folder-html, music, network, games, mail, internet,
+//   user (Windows 7 user silhouette, from AeroThemePlasma icons),
+//   minecraft (isometric grass block)
 //
 // To add more: drop any PNG into assets/icons/  and reference it below.
 // ============================================================
 const ICONS = [
-  { label: "Computer",       url: "about:blank",                       icon: "assets/icons/computer.png" },
-  { label: "Recycle Bin",    url: "about:blank",                       icon: "assets/icons/recycle-empty.png" },
-  { label: "Internet Explorer", url: "https://en.wikipedia.org/wiki/Internet_Explorer", icon: "assets/icons/ie.png" },
-  { label: "Wikipedia",      url: "https://en.wikipedia.org/",         icon: "assets/icons/internet.png" },
-  { label: "My Documents",   url: "about:blank",                       icon: "assets/icons/documents.png" },
-  { label: "Music",          url: "about:blank",                       icon: "assets/icons/music.png" },
-  { label: "Network",        url: "about:blank",                       icon: "assets/icons/network.png" },
-  { label: "Games",          url: "about:blank",                       icon: "assets/icons/games.png" },
-  { label: "Mail",           url: "about:blank",                       icon: "assets/icons/mail.png" },
+  { label: "About Me",         url: "pages/about-me/",              icon: "assets/icons/user.png", openOnStart: true },
+  { label: "Projects",         url: "pages/projects/",              icon: "assets/icons/folder.png" },
+  { label: "Minecraft Server", url: "pages/minecraft-server-info/", icon: "assets/icons/minecraft.png" },
 ];
 // ============================================================
 
@@ -75,9 +73,16 @@ function openIE(entry) {
   const id = "win-" + Math.random().toString(36).slice(2, 9);
   const win = document.createElement("div");
   win.className = "window";
-  const w = 780, h = 520;
-  const cx = Math.max(20, (window.innerWidth  - w) / 2 + (openWindows.size * 24));
-  const cy = Math.max(20, (window.innerHeight - h) / 2 + (openWindows.size * 24) - 20);
+  // Open at 80% of the viewport, centred in the space above the 40px
+  // taskbar and right of the desktop icon column (12px offset + 4px
+  // padding + 92px column + a little air); each extra window cascades
+  // 24px down-right. CSS min-width / min-height (480x300) still apply.
+  const TASKBAR = 40, ICON_COLUMN = 116, cascade = openWindows.size * 24;
+  const w = Math.round(window.innerWidth  * 0.8);
+  const h = Math.round(window.innerHeight * 0.8);
+  const roomRight = window.innerWidth - ICON_COLUMN;
+  const cx = (w <= roomRight ? ICON_COLUMN + (roomRight - w) / 2 : Math.max(0, (window.innerWidth - w) / 2)) + cascade;
+  const cy = Math.max(0, (window.innerHeight - TASKBAR - h) / 2 + cascade);
   win.style.left = cx + "px";
   win.style.top  = cy + "px";
   win.style.width  = w + "px";
@@ -180,19 +185,130 @@ function openIE(entry) {
   const iframe  = win.querySelector("iframe");
   const address = win.querySelector(".address input");
   const titleEl = win.querySelector(".tt");
-  function navigate() {
-    let url = address.value.trim();
-    if (!url) return;
-    if (!/^([a-z]+:)/i.test(url)) url = "https://" + url;
-    iframe.src = url;
+  // Turn what was typed into a URL, like a real address bar:
+  //   "https://x.com/..."  → as is
+  //   "example.com/page"   → https://example.com/page  (first part has a dot)
+  //   "pages/projects/" or "/pages/projects/" → a page on this site
+  function resolveTyped(text) {
+    if (/^[a-z][a-z0-9+.-]*:/i.test(text)) return text;
+    if (/^(localhost|[^\s\/]+\.[^\s\/]+)(:\d+)?(\/|$)/i.test(text)) return "https://" + text;
+    return new URL(text.replace(/^\/+/, ""), new URL(".", location.href)).href;
   }
-  address.addEventListener("keydown", (e) => { if (e.key === "Enter") navigate(); });
+  function navigate() {
+    const text = address.value.trim();
+    if (!text) return;
+    const url = resolveTyped(text);
+    requested = url;
+    address.value = url;
+    iframe.src = url;
+    address.blur();
+  }
+  address.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") navigate();
+    // Escape puts back the current page's URL, as in IE.
+    if (e.key === "Escape") { address.value = hist[pos] || address.value; address.select(); }
+  });
+  // Clicking into the address bar selects it all, ready to type over.
+  address.addEventListener("focus", () => address.select());
   win.querySelector(".addr-btn.refresh").addEventListener("click", () => {
     try { iframe.contentWindow.location.reload(); }
     catch(err) { iframe.src = iframe.src; }
   });
   win.querySelector(".addr-btn.stop").addEventListener("click", () => {
     try { iframe.contentWindow.stop(); } catch(err) {}
+  });
+
+  // Back / Forward use a per-window history list rather than the iframe's
+  // history.back(): that walks the whole tab's joint session history, so
+  // Back on the first page would leave the site, and it throws on
+  // cross-origin pages. Jumps use location.replace() so they don't add
+  // new entries to the real browser history.
+  const backBtn = win.querySelector(".navbtn.back");
+  const fwdBtn  = win.querySelector(".navbtn.fwd");
+  const hist = [];
+  let pos = -1;
+  let pendingJump = null;   // index we're travelling to via Back/Forward
+  let requested = entry.url; // last URL we asked for (fallback when cross-origin)
+  function updateNavButtons() {
+    backBtn.disabled = pos <= 0;
+    fwdBtn.disabled  = pos >= hist.length - 1;
+  }
+  function go(delta) {
+    const target = pos + delta;
+    if (target < 0 || target >= hist.length) return;
+    pendingJump = target;
+    try { iframe.contentWindow.location.replace(hist[target]); }
+    catch(err) { iframe.src = hist[target]; }
+  }
+  backBtn.addEventListener("click", () => go(-1));
+  fwdBtn.addEventListener("click",  () => go(+1));
+  updateNavButtons();
+
+  // Keep the history list, address bar, title bar and tab in sync when
+  // links inside the page navigate. The URL/title can only be read on
+  // same-origin pages (our pages/); for cross-origin sites we fall back
+  // to the URL that was typed in the address bar.
+  // Runs on the iframe's load event, and earlier for our own pages:
+  // pages/page.js posts a "page-ready" message at DOMContentLoaded, so
+  // history is right even while slow embeds (e.g. Gists) are loading.
+  // Running twice for the same page is harmless (same URL = no new entry).
+  const tabLabel = win.querySelector(".tab-label");
+  // Watch link clicks inside our own pages so the address bar shows the
+  // destination straight away, and so links out to other sites (whose
+  // URL we can't read once they load) still get the right address and a
+  // proper history entry.
+  function watchLinks() {
+    let doc;
+    try { doc = iframe.contentDocument; } catch(err) { return; }
+    if (!doc || doc.__ieWatched) return;
+    doc.__ieWatched = true;
+    doc.addEventListener("click", (e) => {
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a || e.defaultPrevented || e.button !== 0 ||
+          e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      const t = (a.getAttribute("target") || "").toLowerCase();
+      if (t && t !== "_self") return;              // opens elsewhere
+      const dest = a.href;
+      if (!/^https?:/i.test(dest)) return;          // mailto:, javascript:, etc.
+      const here = doc.location.href.split("#")[0];
+      if (dest.split("#")[0] === here) return;       // in-page #anchor
+      requested = dest;
+      address.value = dest;
+    });
+  }
+
+  function onPageShown() {
+    watchLinks();
+    let href = null;
+    try { href = iframe.contentWindow.location.href; } catch(err) {}
+    if (href === "about:blank") href = null;
+    if (pendingJump !== null) {
+      pos = pendingJump;
+      pendingJump = null;
+    } else {
+      const url = href || requested;
+      if (url && url !== hist[pos]) {   // same URL = reload, not a new entry
+        hist.splice(pos + 1);
+        hist.push(url);
+        pos = hist.length - 1;
+      }
+    }
+    requested = null;
+    updateNavButtons();
+    if (hist[pos]) address.value = hist[pos];
+    // Other sites' titles can't be read, so show their host name instead.
+    let t = null;
+    try { t = iframe.contentDocument.title; }
+    catch(err) { try { t = new URL(hist[pos]).hostname; } catch(e2) {} }
+    if (t) {
+      titleEl.textContent = t + " - Windows Internet Explorer";
+      tabLabel.textContent = t;
+      taskBtn.title = t;
+    }
+  }
+  iframe.addEventListener("load", onPageShown);
+  window.addEventListener("message", (e) => {
+    if (e.source === iframe.contentWindow && e.data === "page-ready") onPageShown();
   });
 
   // Tab close = close window (single-tab model)
@@ -293,6 +409,9 @@ document.getElementById("showdesktop").addEventListener("click", () => {
   const anyVisible = [...openWindows.values()].some(v => v.win.style.display !== "none");
   openWindows.forEach(v => { v.win.style.display = anyVisible ? "none" : "flex"; });
 });
+
+// -------------------- Startup windows --------------------
+ICONS.filter(e => e.openOnStart).forEach(openIE);
 
 // -------------------- Clock --------------------
 function updateClock() {

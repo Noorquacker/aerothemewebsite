@@ -67,8 +67,13 @@ html, body {
 .titlebar .start img { width: 12px; height: 12px; display: block; }
 .titlebar .title {
   flex: 1;
+  min-width: 0;
   text-align: center;
   text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+  /* Page titles can be long ("Obamium, the Remote Start…"). */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .titlebar .icons {
   display: flex; align-items: center; gap: 3px;
