@@ -11,13 +11,13 @@
 // Icons already extracted from the "Windows 7 Aero" icon theme:
 //   computer, ie, recycle-empty, recycle-full, documents,
 //   folder, folder-html, music, network, games, mail, internet,
-//   contact (Windows Contacts card, from AeroThemePlasma icons),
+//   user (Windows 7 user silhouette, from AeroThemePlasma icons),
 //   minecraft (isometric grass block)
 //
 // To add more: drop any PNG into assets/icons/  and reference it below.
 // ============================================================
 const ICONS = [
-  { label: "About Me",         url: "pages/about-me/",              icon: "assets/icons/contact.png" },
+  { label: "About Me",         url: "pages/about-me/",              icon: "assets/icons/user.png" },
   { label: "Projects",         url: "pages/projects/",              icon: "assets/icons/folder.png" },
   { label: "Minecraft Server", url: "pages/minecraft-server-info/", icon: "assets/icons/minecraft.png" },
 ];
