@@ -178,14 +178,31 @@ function openIE(entry) {
   const iframe  = win.querySelector("iframe");
   const address = win.querySelector(".address input");
   const titleEl = win.querySelector(".tt");
-  function navigate() {
-    let url = address.value.trim();
-    if (!url) return;
-    if (!/^([a-z]+:)/i.test(url)) url = "https://" + url;
-    requested = url;
-    iframe.src = url;
+  // Turn what was typed into a URL, like a real address bar:
+  //   "https://x.com/..."  → as is
+  //   "example.com/page"   → https://example.com/page  (first part has a dot)
+  //   "pages/projects/" or "/pages/projects/" → a page on this site
+  function resolveTyped(text) {
+    if (/^[a-z][a-z0-9+.-]*:/i.test(text)) return text;
+    if (/^(localhost|[^\s\/]+\.[^\s\/]+)(:\d+)?(\/|$)/i.test(text)) return "https://" + text;
+    return new URL(text.replace(/^\/+/, ""), new URL(".", location.href)).href;
   }
-  address.addEventListener("keydown", (e) => { if (e.key === "Enter") navigate(); });
+  function navigate() {
+    const text = address.value.trim();
+    if (!text) return;
+    const url = resolveTyped(text);
+    requested = url;
+    address.value = url;
+    iframe.src = url;
+    address.blur();
+  }
+  address.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") navigate();
+    // Escape puts back the current page's URL, as in IE.
+    if (e.key === "Escape") { address.value = hist[pos] || address.value; address.select(); }
+  });
+  // Clicking into the address bar selects it all, ready to type over.
+  address.addEventListener("focus", () => address.select());
   win.querySelector(".addr-btn.refresh").addEventListener("click", () => {
     try { iframe.contentWindow.location.reload(); }
     catch(err) { iframe.src = iframe.src; }
@@ -229,7 +246,32 @@ function openIE(entry) {
   // history is right even while slow embeds (e.g. Gists) are loading.
   // Running twice for the same page is harmless (same URL = no new entry).
   const tabLabel = win.querySelector(".tab-label");
+  // Watch link clicks inside our own pages so the address bar shows the
+  // destination straight away, and so links out to other sites (whose
+  // URL we can't read once they load) still get the right address and a
+  // proper history entry.
+  function watchLinks() {
+    let doc;
+    try { doc = iframe.contentDocument; } catch(err) { return; }
+    if (!doc || doc.__ieWatched) return;
+    doc.__ieWatched = true;
+    doc.addEventListener("click", (e) => {
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a || e.defaultPrevented || e.button !== 0 ||
+          e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      const t = (a.getAttribute("target") || "").toLowerCase();
+      if (t && t !== "_self") return;              // opens elsewhere
+      const dest = a.href;
+      if (!/^https?:/i.test(dest)) return;          // mailto:, javascript:, etc.
+      const here = doc.location.href.split("#")[0];
+      if (dest.split("#")[0] === here) return;       // in-page #anchor
+      requested = dest;
+      address.value = dest;
+    });
+  }
+
   function onPageShown() {
+    watchLinks();
     let href = null;
     try { href = iframe.contentWindow.location.href; } catch(err) {}
     if (href === "about:blank") href = null;
@@ -247,14 +289,15 @@ function openIE(entry) {
     requested = null;
     updateNavButtons();
     if (hist[pos]) address.value = hist[pos];
-    try {
-      const t = iframe.contentDocument.title;
-      if (t) {
-        titleEl.textContent = t + " - Windows Internet Explorer";
-        tabLabel.textContent = t;
-        taskBtn.title = t;
-      }
-    } catch(err) {}
+    // Other sites' titles can't be read, so show their host name instead.
+    let t = null;
+    try { t = iframe.contentDocument.title; }
+    catch(err) { try { t = new URL(hist[pos]).hostname; } catch(e2) {} }
+    if (t) {
+      titleEl.textContent = t + " - Windows Internet Explorer";
+      tabLabel.textContent = t;
+      taskBtn.title = t;
+    }
   }
   iframe.addEventListener("load", onPageShown);
   window.addEventListener("message", (e) => {
