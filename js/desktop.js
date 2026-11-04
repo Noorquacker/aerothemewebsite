@@ -74,12 +74,14 @@ function openIE(entry) {
   const win = document.createElement("div");
   win.className = "window";
   // Open at 80% of the viewport, centred in the space above the 40px
-  // taskbar; each extra window cascades 24px down-right. CSS min-width /
-  // min-height (480x300) still apply on tiny screens.
-  const TASKBAR = 40, cascade = openWindows.size * 24;
+  // taskbar and right of the desktop icon column (12px offset + 4px
+  // padding + 92px column + a little air); each extra window cascades
+  // 24px down-right. CSS min-width / min-height (480x300) still apply.
+  const TASKBAR = 40, ICON_COLUMN = 116, cascade = openWindows.size * 24;
   const w = Math.round(window.innerWidth  * 0.8);
   const h = Math.round(window.innerHeight * 0.8);
-  const cx = Math.max(0, (window.innerWidth - w) / 2 + cascade);
+  const roomRight = window.innerWidth - ICON_COLUMN;
+  const cx = (w <= roomRight ? ICON_COLUMN + (roomRight - w) / 2 : Math.max(0, (window.innerWidth - w) / 2)) + cascade;
   const cy = Math.max(0, (window.innerHeight - TASKBAR - h) / 2 + cascade);
   win.style.left = cx + "px";
   win.style.top  = cy + "px";

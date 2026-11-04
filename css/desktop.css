@@ -8,9 +8,12 @@ body {
 /* ---------- Desktop icon grid ---------- */
 #desktop {
   position: absolute; top: 12px; left: 12px; right: 0; bottom: 44px;
+  /* Win7 layout: icons run top-to-bottom down the left edge, then wrap
+     into the next column. The IE window opens to the right of the first
+     column (ICON_COLUMN in js/desktop.js). */
   display: grid;
-  grid-template-columns: repeat(auto-fill, 92px);
-  grid-auto-rows: 96px;
+  grid-template-rows: repeat(auto-fill, 96px);
+  grid-auto-columns: 92px;
   grid-auto-flow: column;
   gap: 4px 8px;
   padding: 4px;
