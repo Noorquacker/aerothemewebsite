@@ -25,4 +25,12 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") close();
   });
+
+  // Tell the desktop's IE window (if we're inside one) that this page is
+  // up, before slow embeds finish and fire "load". See js/desktop.js.
+  if (window.parent !== window) {
+    document.addEventListener("DOMContentLoaded", function () {
+      window.parent.postMessage("page-ready", "*");
+    });
+  }
 })();

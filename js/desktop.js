@@ -182,6 +182,7 @@ function openIE(entry) {
     let url = address.value.trim();
     if (!url) return;
     if (!/^([a-z]+:)/i.test(url)) url = "https://" + url;
+    requested = url;
     iframe.src = url;
   }
   address.addEventListener("keydown", (e) => { if (e.key === "Enter") navigate(); });
@@ -193,22 +194,60 @@ function openIE(entry) {
     try { iframe.contentWindow.stop(); } catch(err) {}
   });
 
-  // Back / Forward drive the iframe's own history.
-  win.querySelector(".navbtn.back").addEventListener("click", () => {
-    try { iframe.contentWindow.history.back(); } catch(err) {}
-  });
-  win.querySelector(".navbtn.fwd").addEventListener("click", () => {
-    try { iframe.contentWindow.history.forward(); } catch(err) {}
-  });
+  // Back / Forward use a per-window history list rather than the iframe's
+  // history.back(): that walks the whole tab's joint session history, so
+  // Back on the first page would leave the site, and it throws on
+  // cross-origin pages. Jumps use location.replace() so they don't add
+  // new entries to the real browser history.
+  const backBtn = win.querySelector(".navbtn.back");
+  const fwdBtn  = win.querySelector(".navbtn.fwd");
+  const hist = [];
+  let pos = -1;
+  let pendingJump = null;   // index we're travelling to via Back/Forward
+  let requested = entry.url; // last URL we asked for (fallback when cross-origin)
+  function updateNavButtons() {
+    backBtn.disabled = pos <= 0;
+    fwdBtn.disabled  = pos >= hist.length - 1;
+  }
+  function go(delta) {
+    const target = pos + delta;
+    if (target < 0 || target >= hist.length) return;
+    pendingJump = target;
+    try { iframe.contentWindow.location.replace(hist[target]); }
+    catch(err) { iframe.src = hist[target]; }
+  }
+  backBtn.addEventListener("click", () => go(-1));
+  fwdBtn.addEventListener("click",  () => go(+1));
+  updateNavButtons();
 
-  // Keep the address bar, title bar and tab in sync when links inside
-  // the page navigate. Only works for same-origin pages (our pages/);
-  // cross-origin sites throw, and we just keep the last known values.
+  // Keep the history list, address bar, title bar and tab in sync when
+  // links inside the page navigate. The URL/title can only be read on
+  // same-origin pages (our pages/); for cross-origin sites we fall back
+  // to the URL that was typed in the address bar.
+  // Runs on the iframe's load event, and earlier for our own pages:
+  // pages/page.js posts a "page-ready" message at DOMContentLoaded, so
+  // history is right even while slow embeds (e.g. Gists) are loading.
+  // Running twice for the same page is harmless (same URL = no new entry).
   const tabLabel = win.querySelector(".tab-label");
-  iframe.addEventListener("load", () => {
+  function onPageShown() {
+    let href = null;
+    try { href = iframe.contentWindow.location.href; } catch(err) {}
+    if (href === "about:blank") href = null;
+    if (pendingJump !== null) {
+      pos = pendingJump;
+      pendingJump = null;
+    } else {
+      const url = href || requested;
+      if (url && url !== hist[pos]) {   // same URL = reload, not a new entry
+        hist.splice(pos + 1);
+        hist.push(url);
+        pos = hist.length - 1;
+      }
+    }
+    requested = null;
+    updateNavButtons();
+    if (hist[pos]) address.value = hist[pos];
     try {
-      const href = iframe.contentWindow.location.href;
-      if (href && href !== "about:blank") address.value = href;
       const t = iframe.contentDocument.title;
       if (t) {
         titleEl.textContent = t + " - Windows Internet Explorer";
@@ -216,6 +255,10 @@ function openIE(entry) {
         taskBtn.title = t;
       }
     } catch(err) {}
+  }
+  iframe.addEventListener("load", onPageShown);
+  window.addEventListener("message", (e) => {
+    if (e.source === iframe.contentWindow && e.data === "page-ready") onPageShown();
   });
 
   // Tab close = close window (single-tab model)
