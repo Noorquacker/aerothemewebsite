@@ -33,7 +33,7 @@
 <li>Optionally, iPXE to actually be functional</li>
 <li>Optionally, a web server so that you don't have to make really weird iPXE scripts, instead you can make an awful PHP page that returns an iPXE script to execute based on the MAC address of the client.
 <ul>
-<li>We do this so that we can have multiple PXE-booting clients autoboot to something you specify based on the MAC address and reuse the same iPXE filename. We just do something like <a href="http://some-web-server-gaghiel-hosts:8080/ipxe-script.php?mac={MAC}">http://some-web-server-gaghiel-hosts:8080/ipxe-script.php?mac={MAC}</a></li>
+<li>We do this so that we can have multiple PXE-booting clients autoboot to something you specify based on the MAC address and reuse the same iPXE filename. We just do something like <a href="http://some-web-server-gaghiel-hosts:8080/ipxe-script.php?mac={MAC}" target="_blank" rel="noopener noreferrer">http://some-web-server-gaghiel-hosts:8080/ipxe-script.php?mac={MAC}</a></li>
 </ul>
 </li>
 <li>A bunch of iSCSI targets set up. This was a <em>mess</em> to set up, but we need some disks for the machines to write to.
@@ -58,7 +58,7 @@
 <h2>Conclusion</h2>
 <p>I don't have any photos, but this project was a success. It was a massive flex to be able to just plug an Ethernet cable into any device and just boot from that Ethernet cable, but unfortunately, I have to return to the USB lifestyle.</p>
 <p>Iserafel is still booting to an iSCSI disk with absolutely no issues. Since it barely needs any disk speed and has massive amounts of RAM, this solution works perfect for my needs. Now I can train AI with the insane amounts of cheap RAM I downloaded off eBay.</p>
-<p>You can see the github repo for my iPXE fork with my embeded starter script at <a href="https://github.com/Noorquacker/ipxe">https://github.com/Noorquacker/ipxe</a>. I still need to set up a CI pipeline so it just spits out the exact format I want every time iPXE makes a commit.</p>
+<p>You can see the github repo for my iPXE fork with my embeded starter script at <a href="https://github.com/Noorquacker/ipxe" target="_blank" rel="noopener noreferrer">https://github.com/Noorquacker/ipxe</a>. I still need to set up a CI pipeline so it just spits out the exact format I want every time iPXE makes a commit.</p>
   </main>
   <footer class="footer">&copy; Noorquacker Industries</footer>
 </div>

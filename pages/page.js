@@ -26,6 +26,18 @@
     if (e.key === "Escape") close();
   });
 
+  // Links to other sites open in a new tab: most (YouTube, GitHub, ...)
+  // refuse to load inside the desktop's IE window. The page HTML already
+  // has target="_blank" on them; this also catches links that scripts add
+  // later, like the ones inside GitHub Gist embeds.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a[href]");
+    if (a && /^https?:$/.test(a.protocol) && a.host !== location.host && !a.target) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+  });
+
   // Tell the desktop's IE window (if we're inside one) that this page is
   // up, before slow embeds finish and fire "load". See js/desktop.js.
   if (window.parent !== window) {

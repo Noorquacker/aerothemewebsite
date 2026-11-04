@@ -24,7 +24,7 @@
 <li>DIY the first option, having to do everything from scratch.</li>
 </ul>
 <h1>Going DIY</h1>
-<p>As you can tell, I chose the last option, soldering an Arduino Nano to a perfboard with 3 N-channel MOSFETs and an RGB LED strip from <a href="https://www.adafruit.com/product/285?length=1">Adafruit</a> (link may not reflect the same product I purchased) with some wires sticking into my power supply's leftover PCIe power pins in order to steal 12V from somewhere.</p>
+<p>As you can tell, I chose the last option, soldering an Arduino Nano to a perfboard with 3 N-channel MOSFETs and an RGB LED strip from <a href="https://www.adafruit.com/product/285?length=1" target="_blank" rel="noopener noreferrer">Adafruit</a> (link may not reflect the same product I purchased) with some wires sticking into my power supply's leftover PCIe power pins in order to steal 12V from somewhere.</p>
 <h2>The Schematic</h2>
 <p>Since I'm literally just connecting an Arduino Nano to an RGB LED strip, this was going to be extremely easy considering there are so many schematics online. Here's one:</p>
 <!-- TODO: schematic image missing; the old site's images/rgb.jpg was not an image (it was an unrelated SQLite file). Add the schematic as images/rgb-schematic.jpg. -->
@@ -38,8 +38,8 @@
 <h1>Software Time</h1>
 <p>However, software is still missing, so I had to write my own from scratch.</p>
 <h2>Arduino Sketch</h2>
-<p>For communication, I decided to use the <a href="https://github.com/firmata/protocol">Firmata protocol</a> since it's something widely used for talking to Arduinos. I don't have to create my own command specification for talking to the Arduino this way.</p>
-<p>I just uploaded the <a href="https://github.com/firmata/arduino/blob/master/examples/StandardFirmata/StandardFirmata.ino">StandardFirmata</a> sketch and decided to do all my logic on my PC.</p>
+<p>For communication, I decided to use the <a href="https://github.com/firmata/protocol" target="_blank" rel="noopener noreferrer">Firmata protocol</a> since it's something widely used for talking to Arduinos. I don't have to create my own command specification for talking to the Arduino this way.</p>
+<p>I just uploaded the <a href="https://github.com/firmata/arduino/blob/master/examples/StandardFirmata/StandardFirmata.ino" target="_blank" rel="noopener noreferrer">StandardFirmata</a> sketch and decided to do all my logic on my PC.</p>
 <h2>PC Logic - Where the magic happens</h2>
 <p>Having just learned C# from a project I made for my Minecraft server, which I unfortunately can't find right now (TODO: Find server sys tray viewer), I decided to make a Windows Forms app since it was gonna be easy, right?</p>
 <p><strong><em>Wrong!</em></strong></p>
@@ -53,7 +53,7 @@
 <li>React based on CPU temperature</li>
 </ul>
 <p>Those are all trivial except for PC sound and CPU temperature. Eventually, I found the OpenHardwareLib library, as well as the NAudio library, and I somehow pulled that off in the end.</p>
-<p>Many comments later, I finished, and here is the code: <a href="https://github.com/Noorquacker/RGBLEDController">https://github.com/Noorquacker/RGBLEDController</a>. It's got a lot of cringe comments from 13-year-old me, so don't be too surprised if you find something weird.</p>
+<p>Many comments later, I finished, and here is the code: <a href="https://github.com/Noorquacker/RGBLEDController" target="_blank" rel="noopener noreferrer">https://github.com/Noorquacker/RGBLEDController</a>. It's got a lot of cringe comments from 13-year-old me, so don't be too surprised if you find something weird.</p>
 <h1>The Conclusion</h1>
 <p>So, here's the thing.</p>
 <p>I wrote a Windows Forms app.</p>
