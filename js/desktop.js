@@ -7,6 +7,8 @@
 //   label : text shown under the icon
 //   url   : URL the iframe navigates to
 //   icon  : path to a PNG in assets/icons/  (48x48 or 256x256, they scale)
+//   openOnStart : (optional) true = open this window when the site loads,
+//                 so first-time visitors land on something to read
 //
 // Icons already extracted from the "Windows 7 Aero" icon theme:
 //   computer, ie, recycle-empty, recycle-full, documents,
@@ -17,7 +19,7 @@
 // To add more: drop any PNG into assets/icons/  and reference it below.
 // ============================================================
 const ICONS = [
-  { label: "About Me",         url: "pages/about-me/",              icon: "assets/icons/user.png" },
+  { label: "About Me",         url: "pages/about-me/",              icon: "assets/icons/user.png", openOnStart: true },
   { label: "Projects",         url: "pages/projects/",              icon: "assets/icons/folder.png" },
   { label: "Minecraft Server", url: "pages/minecraft-server-info/", icon: "assets/icons/minecraft.png" },
 ];
@@ -314,6 +316,9 @@ document.getElementById("showdesktop").addEventListener("click", () => {
   const anyVisible = [...openWindows.values()].some(v => v.win.style.display !== "none");
   openWindows.forEach(v => { v.win.style.display = anyVisible ? "none" : "flex"; });
 });
+
+// -------------------- Startup windows --------------------
+ICONS.filter(e => e.openOnStart).forEach(openIE);
 
 // -------------------- Clock --------------------
 function updateClock() {
